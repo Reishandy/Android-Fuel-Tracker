@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Fuel Tracker</string>
+    <string name="fab_icon">FAB Icon</string>
+    <string name="default_avatar">Default Avatar</string>
+</resources>
