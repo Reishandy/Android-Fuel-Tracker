@@ -2,4 +2,9 @@
     <string name="app_name">Fuel Tracker</string>
     <string name="fab_icon">FAB Icon</string>
     <string name="default_avatar">Default Avatar</string>
+    <string name="nothing_to_see_here">Nothing to see here…</string>
+    <string name="card_vehicle_manufacturer_model">%1$s %2$s</string>
+    <string name="card_vehicle_avg">Avg. %1s km/l</string>
+    <string name="card_vehicle_odometer">%1s km</string>
+    <string name="card_vehicle_tank_capacity">Max. %1sL</string>
 </resources>

@@ -35,3 +35,11 @@ fun FuelTracker() {
         }
     }
 }
+
+// TODO: Features and stuff
+//  - CRUD Vehicle
+//  - CRUD Refueling
+//  - CRUD Maintenance
+//  - Statistics (charts?)
+//  - Backup and restore (google drive?)
+//  - Google login

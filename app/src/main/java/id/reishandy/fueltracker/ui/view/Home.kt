@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -22,28 +19,64 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.ui.component.HomeHeader
+import id.reishandy.fueltracker.ui.component.VehicleItem
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 
 @Composable
 fun Home(
     modifier: Modifier = Modifier,
-    onAddButtonClick : () -> Unit = { }
+    onAddButtonClick: () -> Unit = { }
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .padding(dimensionResource(R.dimen.padding_medium))
     ) {
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+        ) {
             HomeHeader()
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimensionResource(R.dimen.padding_small)),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+            ) {
+                Text(
+                    text = "Your Vehicles",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
+                HorizontalDivider()
+            }
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+            ) {
+                items(10) { index ->
+                    VehicleItem()
+                }
+
+                item {
+                    Text(
+                        text = stringResource(R.string.nothing_to_see_here),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         }
 
         FloatingActionButton(
@@ -52,7 +85,10 @@ fun Home(
                 .align(Alignment.BottomEnd)
                 .padding(dimensionResource(R.dimen.padding_small))
         ) {
-            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.fab_icon))
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(R.string.fab_icon)
+            )
         }
     }
 }
