@@ -44,8 +44,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(
-    modifier: Modifier = Modifier,
-    onFloatingButtonClick: () -> Unit = { },
+    modifier: Modifier = Modifier
 ) {
     // TODO: Move to ui state?
     var showSheet by remember { mutableStateOf(false) }
@@ -89,7 +88,6 @@ fun Home(
                     VehicleItem()
                 }
 
-
                 // TODO: Show this when list is empty
                 item {
                     Text(
@@ -128,7 +126,7 @@ fun Home(
                     contentDescription = stringResource(R.string.fab_icon)
                 )
             },
-            text = { Text(text = "Add Vehicle") },
+            text = { Text(text = stringResource(R.string.add_vehicle)) },
         )
 
         VehicleFormBottomSheet(

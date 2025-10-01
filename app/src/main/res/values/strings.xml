@@ -3,8 +3,23 @@
     <string name="fab_icon">FAB Icon</string>
     <string name="default_avatar">Default Avatar</string>
     <string name="nothing_to_see_here">Nothing to see here…</string>
-    <string name="card_vehicle_manufacturer_model">%1$s %2$s</string>
+    <string name="card_vehicle_manufacturer_model">%1$s %2$s %3$s</string>
     <string name="card_vehicle_avg">Avg. %1s km/l</string>
     <string name="card_vehicle_odometer">%1s km</string>
     <string name="card_vehicle_tank_capacity">Max. %1sL</string>
+    <string name="add_new_vehicle">Add New Vehicle</string>
+    <string name="vehicle_name">Vehicle Name</string>
+    <string name="vehicle_name_placeholder">e.g. Main Vehicle</string>
+    <string name="manufacturer">Vehicle Manufacturer</string>
+    <string name="manufacturer_placeholder">e.g. Honda</string>
+    <string name="model">Vehicle Model</string>
+    <string name="model_placeholder">e.g. PCX 160</string>
+    <string name="year">Vehicle Year</string>
+    <string name="year_placeholder">e.g. 2025</string>
+    <string name="max_fuel">Max Fuel Capacity</string>
+    <string name="max_fuel_placeholder">e.g. 8.0</string>
+    <string name="liter_abbr">L</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="add_vehicle">Add Vehicle</string>
 </resources>
