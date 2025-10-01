@@ -29,6 +29,7 @@ fun VehicleItem(
     name: String = "Placeholder",
     manufacturer: String = "Placeholder",
     model: String = "Placeholder",
+    year: Int = 2025,
     odometer: Int = 0,
     averageConsumption: Double = 0.0,
     tankCapacity: Double = 0.0
@@ -55,7 +56,7 @@ fun VehicleItem(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = stringResource(R.string.card_vehicle_manufacturer_model, manufacturer, model),
+                    text = stringResource(R.string.card_vehicle_manufacturer_model, manufacturer, model, year.toString()),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
@@ -103,6 +104,7 @@ internal fun PreviewVehicleItem() {
         VehicleItem(
             manufacturer = "Honda",
             model = "PCX 160",
+            year = 2024,
             name = "Main Motorcycle",
             odometer = 980000,
             averageConsumption = 39.99,
