@@ -187,8 +187,9 @@ fun VehicleFormBottomSheet(
 
                 Row(
                     modifier = Modifier
-                        .align(Alignment.End),
-                    horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                        .align(Alignment.End)
+                        .padding(vertical = dimensionResource(R.dimen.padding_medium)),
+                    horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
                 ) {
                     Button(
                         onClick = onCloseButtonClick,
@@ -201,16 +202,11 @@ fun VehicleFormBottomSheet(
                     }
 
                     Button(
-                        onClick = {
-                            onCloseButtonClick()
-                            onSaveButtonClick()
-                        },
+                        onClick = onSaveButtonClick,
                     ) {
                         Text(text = stringResource(R.string.save))
                     }
                 }
-
-                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
