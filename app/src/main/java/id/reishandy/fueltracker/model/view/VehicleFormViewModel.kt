@@ -1,0 +1,154 @@
+package id.reishandy.fueltracker.model.view
+
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import id.reishandy.fueltracker.model.showToast
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+
+data class VehicleFormErrorState(
+    var nameError: String? = null,
+    var manufacturerError: String? = null,
+    var modelError: String? = null,
+    var yearError: String? = null,
+    var maxFuelError: String? = null,
+)
+
+data class VehicleFormState(
+    val errorState: VehicleFormErrorState = VehicleFormErrorState(),
+    val showSheet: Boolean = false,
+    val isLoading: Boolean = false, // TODO: Implement loading state
+)
+
+class VehicleFormViewModel(): ViewModel() {
+    private val _uiState = MutableStateFlow(VehicleFormState())
+    val uiState: StateFlow<VehicleFormState> = _uiState.asStateFlow()
+
+    var name by mutableStateOf("")
+        private set
+    var manufacturer by mutableStateOf("")
+        private set
+    var model by mutableStateOf("")
+        private set
+    var year by mutableStateOf("")
+        private set
+    var maxFuel by mutableStateOf("")
+        private set
+
+    fun updateName(newName: String) {
+        name = newName
+    }
+
+    fun updateManufacturer(newManufacturer: String) {
+        manufacturer = newManufacturer
+    }
+
+    fun updateModel(newModel: String) {
+        model = newModel
+    }
+
+    fun updateYear(newYear: String) {
+        year = newYear
+    }
+
+    fun updateMaxFuel(newMaxFuel: String) {
+        maxFuel = newMaxFuel
+    }
+
+    fun resetForm() {
+        name = ""
+        manufacturer = ""
+        model = ""
+        year = ""
+        maxFuel = ""
+        _uiState.value = VehicleFormState()
+    }
+
+    fun setLoading(isLoading: Boolean) {
+        _uiState.update { it.copy(isLoading = isLoading) }
+    }
+
+    fun showSheet() {
+        _uiState.update { it.copy(showSheet = true) }
+    }
+
+    fun hideSheet() {
+        _uiState.update { it.copy(showSheet = false) }
+    }
+
+    fun validateForm(): Boolean {
+        var isValid = true
+        val errorState = VehicleFormErrorState()
+
+        if (name.isBlank()) {
+            errorState.nameError = "Name cannot be empty"
+            isValid = false
+        }
+
+        if (manufacturer.isBlank()) {
+            errorState.manufacturerError = "Manufacturer cannot be empty"
+            isValid = false
+        }
+
+        if (model.isBlank()) {
+            errorState.modelError = "Model cannot be empty"
+            isValid = false
+        }
+
+        if (year.isBlank()) {
+            errorState.yearError = "Year cannot be empty"
+            isValid = false
+        } else {
+            val maxYear = LocalDate.now().year + 5 // Allow up to 5 years in the future
+            val yearInt = year.toIntOrNull()
+            if (yearInt == null || yearInt < 1886 || yearInt > maxYear) { // First car invented in 1886
+                errorState.yearError = "Year must be a valid number between 1886 and $maxYear"
+                isValid = false
+            }
+        }
+
+        // TODO: Fix validation not working
+        if (maxFuel.isBlank()) {
+            errorState.maxFuelError = "Max fuel cannot be empty"
+            isValid = false
+        } else {
+            val maxFuelFloat = maxFuel.toDoubleOrNull()
+            if (maxFuelFloat == null || maxFuelFloat <= 0) {
+                errorState.maxFuelError = "Max fuel must be a valid positive decimal number"
+                isValid = false
+            }
+        }
+
+        _uiState.update { it.copy(errorState = errorState) }
+        return isValid
+    }
+
+    fun addVehicle(
+        context: Context,
+        onSuccess: () -> Unit = { },
+    ) {
+        if (!validateForm()) return
+
+        viewModelScope.launch {
+            setLoading(true)
+            // TODO: Add vehicle to database
+            // TODO: Try catch if error show toast?
+
+            showToast(context, maxFuel, Toast.LENGTH_LONG)
+            resetForm()
+            showToast(context, "Vehicle added successfully")
+
+            setLoading(false)
+            onSuccess()
+        }
+    }
+}

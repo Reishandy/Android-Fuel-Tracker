@@ -29,6 +29,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -52,10 +57,22 @@ fun VehicleFormBottomSheet(
         skipPartiallyExpanded = true
     ),
     showSheet: Boolean = true,
+    nameValue: String = "",
+    onNameValueChange: (String) -> Unit = { },
+    nameError: String? = null,
+    manufacturerValue: String = "",
+    onManufacturerValueChange: (String) -> Unit = { },
+    manufacturerError: String? = null,
+    modelValue: String = "",
+    onModelValueChange: (String) -> Unit = { },
+    modelError: String? = null,
+    yearValue: String = "",
+    onYearValueChange: (String) -> Unit = { },
+    yearError: String? = null,
+    maxFuelValue: String = "",
+    onMaxFuelValueChange: (String) -> Unit = { },
+    maxFuelError: String? = null,
 ) {
-    // TODO: Close button
-    // TODO: Handle keyboard overlap
-
     if (showSheet) {
         ModalBottomSheet(
             onDismissRequest = onDismissRequest,
@@ -65,7 +82,7 @@ fun VehicleFormBottomSheet(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                    .padding(horizontal = dimensionResource(R.dimen.padding_small))
             ) {
                 Text(
                     text = stringResource(R.string.add_new_vehicle),
@@ -75,24 +92,27 @@ fun VehicleFormBottomSheet(
                 )
 
                 Column(
-                    modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_large)),
+                    modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_medium)),
                     verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
                 ) {
-                    // TODO: Handle all state by ui state
+                    // TODO: error field and make sure to make the supporting text does not occupy space when there's no error
                     TextField(
-                        value = "",
-                        onValueChange = { },
+                        value = nameValue,
+                        onValueChange = onNameValueChange,
                         modifier = Modifier
                             .fillMaxWidth(),
                         label = { Text(text = stringResource(R.string.vehicle_name)) },
                         placeholder = { Text(text = stringResource(R.string.vehicle_name_placeholder)) },
                         leadingIcon = {
-                             Icon(imageVector = Icons.Default.DirectionsCar, contentDescription = null)
+                            Icon(
+                                imageVector = Icons.Default.DirectionsCar,
+                                contentDescription = null
+                            )
                         },
                         supportingText = {
-                            Text(text = "Error message")
+                            if (nameError != null) Text(text = nameError)
                         },
-                        isError = false,
+                        isError = nameError != null,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next
                         ),
@@ -100,19 +120,18 @@ fun VehicleFormBottomSheet(
                     )
 
                     TextField(
-                        value = "",
-                        onValueChange = { },
+                        value = manufacturerValue,
+                        onValueChange = onManufacturerValueChange,
                         modifier = Modifier
                             .fillMaxWidth(),
                         label = { Text(text = stringResource(R.string.manufacturer)) },
                         placeholder = { Text(text = stringResource(R.string.manufacturer_placeholder)) },
                         leadingIcon = {
-                            Icon(imageVector = Icons.Default.Construction, contentDescription = null)
+                            Icon(
+                                imageVector = Icons.Default.Construction,
+                                contentDescription = null
+                            )
                         },
-                        supportingText = {
-                            Text(text = "Error message")
-                        },
-                        isError = false,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next
                         ),
@@ -120,8 +139,8 @@ fun VehicleFormBottomSheet(
                     )
 
                     TextField(
-                        value = "",
-                        onValueChange = { },
+                        value = modelValue,
+                        onValueChange = onModelValueChange,
                         modifier = Modifier
                             .fillMaxWidth(),
                         label = { Text(text = stringResource(R.string.model)) },
@@ -129,10 +148,6 @@ fun VehicleFormBottomSheet(
                         leadingIcon = {
                             Icon(imageVector = Icons.Default.Build, contentDescription = null)
                         },
-                        supportingText = {
-                            Text(text = "Error message")
-                        },
-                        isError = false,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next
                         ),
@@ -140,19 +155,18 @@ fun VehicleFormBottomSheet(
                     )
 
                     TextField(
-                        value = "",
-                        onValueChange = { },
+                        value = yearValue,
+                        onValueChange = onYearValueChange,
                         modifier = Modifier
                             .fillMaxWidth(),
                         label = { Text(text = stringResource(R.string.year)) },
                         placeholder = { Text(text = stringResource(R.string.year_placeholder)) },
                         leadingIcon = {
-                            Icon(imageVector = Icons.Default.CalendarToday, contentDescription = null)
+                            Icon(
+                                imageVector = Icons.Default.CalendarToday,
+                                contentDescription = null
+                            )
                         },
-                        supportingText = {
-                            Text(text = "Error message")
-                        },
-                        isError = false,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Next,
@@ -161,22 +175,21 @@ fun VehicleFormBottomSheet(
                     )
 
                     TextField(
-                        value = "",
-                        onValueChange = { },
+                        value = maxFuelValue,
+                        onValueChange = onMaxFuelValueChange,
                         modifier = Modifier
                             .fillMaxWidth(),
                         label = { Text(text = stringResource(R.string.max_fuel)) },
                         placeholder = { Text(text = stringResource(R.string.max_fuel_placeholder)) },
                         leadingIcon = {
-                            Icon(imageVector = Icons.Default.LocalGasStation, contentDescription = null)
+                            Icon(
+                                imageVector = Icons.Default.LocalGasStation,
+                                contentDescription = null
+                            )
                         },
                         suffix = {
                             Text(text = stringResource(R.string.liter_abbr))
                         },
-                        supportingText = {
-                            Text(text = "Error message")
-                        },
-                        isError = false,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Decimal,
                             imeAction = ImeAction.Done,
@@ -193,6 +206,7 @@ fun VehicleFormBottomSheet(
                 ) {
                     Button(
                         onClick = onCloseButtonClick,
+                        modifier = Modifier.fillMaxWidth().weight(0.5f),
                         colors = ButtonDefaults.buttonColors().copy(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -203,7 +217,10 @@ fun VehicleFormBottomSheet(
 
                     Button(
                         onClick = onSaveButtonClick,
+                        modifier = Modifier.fillMaxWidth().weight(0.5f),
+                        // enabled = nameValue.isNotEmpty() && manufacturerValue.isNotEmpty() && modelValue.isNotEmpty() && yearValue.isNotEmpty() && maxFuelValue.isNotEmpty()
                     ) {
+                        // TODO: Loading state?
                         Text(text = stringResource(R.string.save))
                     }
                 }

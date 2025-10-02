@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,8 +18,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
-import java.text.DecimalFormat
-import kotlin.math.tan
 
 @Composable
 fun VehicleItem(
@@ -29,13 +25,11 @@ fun VehicleItem(
     name: String = "Placeholder",
     manufacturer: String = "Placeholder",
     model: String = "Placeholder",
-    year: Int = 2025,
-    odometer: Int = 0,
-    averageConsumption: Double = 0.0,
-    tankCapacity: Double = 0.0
+    year: String = "2025",
+    odometer: String = "0",
+    averageConsumption: String = "0.0",
+    tankCapacity: String = "0.0"
 ) {
-    val formatter = DecimalFormat("#,###")
-
     Card(
         modifier = modifier
             .fillMaxWidth(),
@@ -56,10 +50,10 @@ fun VehicleItem(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = stringResource(R.string.card_vehicle_manufacturer_model, manufacturer, model, year.toString()),
+                    text = stringResource(R.string.card_vehicle_manufacturer_model, manufacturer, model, year),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
 
@@ -83,7 +77,7 @@ fun VehicleItem(
                 )
 
                 Text(
-                    text = stringResource(R.string.card_vehicle_odometer, formatter.format(odometer)),
+                    text = stringResource(R.string.card_vehicle_odometer, odometer),
                     style = MaterialTheme.typography.titleLarge
                 )
 
@@ -104,11 +98,11 @@ internal fun PreviewVehicleItem() {
         VehicleItem(
             manufacturer = "Honda",
             model = "PCX 160",
-            year = 2024,
+            year = "2024",
             name = "Main Motorcycle",
-            odometer = 980000,
-            averageConsumption = 39.99,
-            tankCapacity = 8.1
+            odometer = "980,000",
+            averageConsumption = "39.99",
+            tankCapacity = "8.1"
         )
     }
 }
