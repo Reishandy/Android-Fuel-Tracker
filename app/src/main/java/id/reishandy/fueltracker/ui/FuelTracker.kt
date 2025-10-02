@@ -11,12 +11,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import id.reishandy.fueltracker.model.VehicleFormViewModelFactory
 import id.reishandy.fueltracker.model.view.VehicleFormViewModel
 import id.reishandy.fueltracker.ui.component.VehicleFormBottomSheet
 import id.reishandy.fueltracker.ui.view.Home
@@ -38,8 +37,7 @@ fun FuelTracker() {
     val context: Context = LocalContext.current
     val scope: CoroutineScope = rememberCoroutineScope()
 
-    val vehicleFormViewModel: VehicleFormViewModel =
-        viewModel(factory = VehicleFormViewModelFactory(context))
+    val vehicleFormViewModel: VehicleFormViewModel = hiltViewModel()
 
     val vehicleFormUiState by vehicleFormViewModel.uiState.collectAsState()
 

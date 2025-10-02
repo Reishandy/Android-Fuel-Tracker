@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import id.reishandy.fueltracker.data.vehicle.VehicleRepository
 import id.reishandy.fueltracker.model.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import javax.inject.Inject
 
 data class VehicleFormErrorState(
     var nameError: String? = null,
@@ -29,7 +32,10 @@ data class VehicleFormState(
     val isProcessing: Boolean = false,
 )
 
-class VehicleFormViewModel(): ViewModel() {
+@HiltViewModel
+class VehicleFormViewModel @Inject constructor(
+    private val vehicleRepository: VehicleRepository // TODO: Use this to add vehicle to database
+) : ViewModel() {
     private val _uiState = MutableStateFlow(VehicleFormState())
     val uiState: StateFlow<VehicleFormState> = _uiState.asStateFlow()
 
