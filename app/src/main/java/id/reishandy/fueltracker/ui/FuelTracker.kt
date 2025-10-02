@@ -72,7 +72,19 @@ fun FuelTracker() {
                     vehicleFormViewModel.hideSheet()
                 }
             },
+            onSaveButtonClick = {
+                vehicleFormViewModel.addVehicle(
+                    context = context,
+                    onSuccess = {
+                        scope.launch {
+                            sheetState.hide()
+                            vehicleFormViewModel.hideSheet()
+                        }
+                    }
+                )
+            },
             sheetState = sheetState,
+            isProcessing = vehicleFormUiState.isProcessing,
             showSheet = vehicleFormUiState.showSheet,
             nameValue = vehicleFormViewModel.name,
             onNameValueChange = { vehicleFormViewModel.updateName(it) },
@@ -88,18 +100,7 @@ fun FuelTracker() {
             yearError = vehicleFormUiState.errorState.yearError,
             maxFuelValue = vehicleFormViewModel.maxFuel,
             onMaxFuelValueChange = { vehicleFormViewModel.updateMaxFuel(it) },
-            maxFuelError = vehicleFormUiState.errorState.maxFuelError,
-            onSaveButtonClick = {
-                vehicleFormViewModel.addVehicle(
-                    context = context,
-                    onSuccess = {
-                        scope.launch {
-                            sheetState.hide()
-                            vehicleFormViewModel.hideSheet()
-                        }
-                    }
-                )
-            }
+            maxFuelError = vehicleFormUiState.errorState.maxFuelError
         )
     }
 }

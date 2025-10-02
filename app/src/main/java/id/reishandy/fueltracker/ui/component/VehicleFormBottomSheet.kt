@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -19,6 +21,7 @@ import androidx.compose.material.icons.filled.LocalGasStation
 import androidx.compose.material.icons.filled.Warehouse
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -57,6 +60,7 @@ fun VehicleFormBottomSheet(
         skipPartiallyExpanded = true
     ),
     showSheet: Boolean = true,
+    isProcessing: Boolean = false,
     nameValue: String = "",
     onNameValueChange: (String) -> Unit = { },
     nameError: String? = null,
@@ -95,7 +99,6 @@ fun VehicleFormBottomSheet(
                     modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_medium)),
                     verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
                 ) {
-                    // TODO: error field and make sure to make the supporting text does not occupy space when there's no error
                     TextField(
                         value = nameValue,
                         onValueChange = onNameValueChange,
@@ -109,9 +112,7 @@ fun VehicleFormBottomSheet(
                                 contentDescription = null
                             )
                         },
-                        supportingText = {
-                            if (nameError != null) Text(text = nameError)
-                        },
+                        supportingText = if (nameError != null) { { Text(text = nameError) } } else null,
                         isError = nameError != null,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next
@@ -132,6 +133,8 @@ fun VehicleFormBottomSheet(
                                 contentDescription = null
                             )
                         },
+                        supportingText = if (manufacturerError != null) { { Text(text = manufacturerError) } } else null,
+                        isError = manufacturerError != null,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next
                         ),
@@ -148,6 +151,8 @@ fun VehicleFormBottomSheet(
                         leadingIcon = {
                             Icon(imageVector = Icons.Default.Build, contentDescription = null)
                         },
+                        supportingText = if (modelError != null) { { Text(text = modelError) } } else null,
+                        isError = modelError != null,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next
                         ),
@@ -167,6 +172,8 @@ fun VehicleFormBottomSheet(
                                 contentDescription = null
                             )
                         },
+                        supportingText = if (yearError != null) { { Text(text = yearError) } } else null,
+                        isError = yearError != null,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Next,
@@ -187,6 +194,8 @@ fun VehicleFormBottomSheet(
                                 contentDescription = null
                             )
                         },
+                        supportingText = if (maxFuelError != null) { { Text(text = maxFuelError) } } else null,
+                        isError = maxFuelError != null,
                         suffix = {
                             Text(text = stringResource(R.string.liter_abbr))
                         },
@@ -206,7 +215,9 @@ fun VehicleFormBottomSheet(
                 ) {
                     Button(
                         onClick = onCloseButtonClick,
-                        modifier = Modifier.fillMaxWidth().weight(0.5f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.5f),
                         colors = ButtonDefaults.buttonColors().copy(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -217,11 +228,20 @@ fun VehicleFormBottomSheet(
 
                     Button(
                         onClick = onSaveButtonClick,
-                        modifier = Modifier.fillMaxWidth().weight(0.5f),
-                        // enabled = nameValue.isNotEmpty() && manufacturerValue.isNotEmpty() && modelValue.isNotEmpty() && yearValue.isNotEmpty() && maxFuelValue.isNotEmpty()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.5f),
+                        enabled = !isProcessing,
                     ) {
-                        // TODO: Loading state?
-                        Text(text = stringResource(R.string.save))
+                        if (isProcessing) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(dimensionResource(R.dimen.progress_indicator_size)),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        } else {
+                            Text(text = stringResource(R.string.save))
+                        }
                     }
                 }
             }

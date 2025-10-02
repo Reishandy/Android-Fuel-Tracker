@@ -26,7 +26,7 @@ data class VehicleFormErrorState(
 data class VehicleFormState(
     val errorState: VehicleFormErrorState = VehicleFormErrorState(),
     val showSheet: Boolean = false,
-    val isLoading: Boolean = false, // TODO: Implement loading state
+    val isProcessing: Boolean = false,
 )
 
 class VehicleFormViewModel(): ViewModel() {
@@ -73,8 +73,8 @@ class VehicleFormViewModel(): ViewModel() {
         _uiState.value = VehicleFormState()
     }
 
-    fun setLoading(isLoading: Boolean) {
-        _uiState.update { it.copy(isLoading = isLoading) }
+    fun setProcessing(isProcessing: Boolean) {
+        _uiState.update { it.copy(isProcessing = isProcessing) }
     }
 
     fun showSheet() {
@@ -116,7 +116,6 @@ class VehicleFormViewModel(): ViewModel() {
             }
         }
 
-        // TODO: Fix validation not working
         if (maxFuel.isBlank()) {
             errorState.maxFuelError = "Max fuel cannot be empty"
             isValid = false
@@ -139,15 +138,14 @@ class VehicleFormViewModel(): ViewModel() {
         if (!validateForm()) return
 
         viewModelScope.launch {
-            setLoading(true)
+            setProcessing(true)
             // TODO: Add vehicle to database
             // TODO: Try catch if error show toast?
 
-            showToast(context, maxFuel, Toast.LENGTH_LONG)
             resetForm()
             showToast(context, "Vehicle added successfully")
 
-            setLoading(false)
+            setProcessing(false)
             onSuccess()
         }
     }
