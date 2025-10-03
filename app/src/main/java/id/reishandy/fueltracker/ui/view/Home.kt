@@ -57,7 +57,7 @@ fun Home(
                 horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
             ) {
                 Text(
-                    text = "Your Vehicles",
+                    text = stringResource(R.string.your_vehicles),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -122,7 +122,34 @@ fun Home(
 internal fun PreviewHome() {
     FuelTrackerTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxSize()) {
-            Home()
+            Home(
+                vehicles = listOf(
+                    Vehicle(
+                        id = 1,
+                        name = "My Car",
+                        manufacturer = "Toyota",
+                        model = "Avanza",
+                        year = 2010,
+                        maxFuelCapacity = 45.0
+                    ),
+                    Vehicle(
+                        id = 2,
+                        name = "My Motorcycle",
+                        manufacturer = "Yamaha",
+                        model = "NMAX",
+                        year = 2020,
+                        maxFuelCapacity = 7.1
+                    ),
+                    Vehicle(
+                        id = 3,
+                        name = "My Truck",
+                        manufacturer = "Hino",
+                        model = "Dutro",
+                        year = 2015,
+                        maxFuelCapacity = 100.0
+                    )
+                )
+            )
         }
     }
 }

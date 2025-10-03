@@ -27,4 +27,5 @@
     <string name="delete">Delete</string>
     <string name="delete_text">Are you sure want to delete \"%1$s\" entry? This action cannot be undone.</string>
     <string name="edit">Edit</string>
+    <string name="your_vehicles">Your Vehicles</string>
 </resources>

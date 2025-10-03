@@ -1,30 +1,15 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
-                android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+    android:tint="#000000">
+  <group android:scaleX="0.464"
+      android:scaleY="0.464"
+      android:translateX="257.28"
+      android:translateY="257.28">
     <path
-        android:fillColor="#FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
-        android:strokeWidth="1"
-        android:strokeColor="#00000000" />
+        android:fillColor="@android:color/white"
+        android:pathData="M160,840L160,200Q160,167 183.5,143.5Q207,120 240,120L480,120Q513,120 536.5,143.5Q560,167 560,200L560,480L600,480Q633,480 656.5,503.5Q680,527 680,560L680,740Q680,757 691.5,768.5Q703,780 720,780Q737,780 748.5,768.5Q760,757 760,740L760,452Q751,457 741,458.5Q731,460 720,460Q678,460 649,431Q620,402 620,360Q620,328 637.5,302.5Q655,277 684,266L600,182L642,140L790,284Q805,299 812.5,319Q820,339 820,360L820,740Q820,782 791,811Q762,840 720,840Q678,840 649,811Q620,782 620,740L620,540Q620,540 620,540Q620,540 620,540L560,540L560,840L160,840ZM240,400L480,400L480,200Q480,200 480,200Q480,200 480,200L240,200Q240,200 240,200Q240,200 240,200L240,400ZM720,400Q737,400 748.5,388.5Q760,377 760,360Q760,343 748.5,331.5Q737,320 720,320Q703,320 691.5,331.5Q680,343 680,360Q680,377 691.5,388.5Q703,400 720,400ZM240,760L480,760L480,480L240,480L240,760ZM480,760L240,760L240,760L480,760Z"/>
+  </group>
 </vector>
