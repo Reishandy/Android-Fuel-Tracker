@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import id.reishandy.fueltracker.model.DeleteViewModel
 import id.reishandy.fueltracker.model.VehicleFormViewModel
+import id.reishandy.fueltracker.model.VehicleViewModel
 import id.reishandy.fueltracker.ui.component.DeleteBottomSheet
 import id.reishandy.fueltracker.ui.component.VehicleFormBottomSheet
 import id.reishandy.fueltracker.ui.view.Home
@@ -26,10 +27,7 @@ import kotlinx.coroutines.launch
 
 enum class FuelTrackerNav {
     HOME,
-    ADD_VEHICLE,
     VEHICLE_DETAIL,
-    ADD_REFUELING,
-    SETTINGS
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,9 +37,11 @@ fun FuelTracker() {
     val context: Context = LocalContext.current
     val scope: CoroutineScope = rememberCoroutineScope()
 
+    val vehicleViewModel: VehicleViewModel = hiltViewModel()
     val vehicleFormViewModel: VehicleFormViewModel = hiltViewModel()
     val deleteViewModel: DeleteViewModel = hiltViewModel()
 
+    val vehicleUiState by vehicleViewModel.uiState.collectAsState()
     val vehicleFormUiState by vehicleFormViewModel.uiState.collectAsState()
     val deleteUiState by deleteViewModel.uiState.collectAsState()
 
@@ -60,6 +60,7 @@ fun FuelTracker() {
         ) {
             composable(route = FuelTrackerNav.HOME.name) {
                 Home(
+                    vehicles = vehicleUiState.vehicles,
                     onAddVehicleClick = {
                         vehicleFormViewModel.showSheet()
                     },
@@ -72,6 +73,10 @@ fun FuelTracker() {
                         deleteViewModel.showSheet()
                     }
                 )
+            }
+
+            composable(route = FuelTrackerNav.VEHICLE_DETAIL.name) {
+                /* TODO: Vehicle Detail Screen */
             }
         }
 
@@ -163,10 +168,7 @@ fun FuelTracker() {
 }
 
 // TODO: Features and stuff
-//  - VehicleItem onCLick animation and hold for edit or delete
-//  - CRUD Vehicle
 //  - CRUD Refueling
-//  - CRUD Maintenance
 //  - Statistics (charts?)
 //  - Backup and restore (google drive?)
 //  - Google login

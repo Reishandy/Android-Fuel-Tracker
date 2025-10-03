@@ -33,11 +33,11 @@ import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 @Composable
 fun Home(
     modifier: Modifier = Modifier,
+    vehicles: List<Vehicle> = emptyList(),
     onAddVehicleClick: () -> Unit = { },
     onEditVehicleClick: (Vehicle) -> Unit = { _ -> },
     onDeleteVehicleClick: (Vehicle) -> Unit = { _ -> }
 ) {
-    // TODO: Receive list of vehicles from ViewModel
     // TODO: Handle Login
     Box(
         modifier = modifier
@@ -68,53 +68,27 @@ fun Home(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
             ) {
-                item {
-                    VehicleItem(
-                        vehicle = Vehicle(
-                            id = 1,
-                            name = "My Car",
-                            manufacturer = "Toyota",
-                            model = "Avanza",
-                            year = 2020,
-                            maxFuelCapacity = 45.0
-                        ),
-                        onEditClick = onEditVehicleClick,
-                        onDeleteClick = onDeleteVehicleClick
-                    )
-                }
+                if (vehicles.isNotEmpty()) {
+                    items(vehicles.size) { index ->
+                        val vehicle = vehicles[index]
+                        VehicleItem(
+                            vehicle = vehicle,
+                            onEditClick = onEditVehicleClick,
+                            onDeleteClick = onDeleteVehicleClick
+                        )
+                    }
+                } else {
+                    item {
+                        Text(
+                            text = stringResource(R.string.nothing_to_see_here),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
 
-                item {
-                    VehicleItem(
-                        vehicle = Vehicle(
-                            id = 2,
-                            name = "My Motor",
-                            manufacturer = "Yamaha",
-                            model = "Nmax",
-                            year = 2021,
-                            maxFuelCapacity = 7.1
-                        ),
-                        onEditClick = onEditVehicleClick,
-                        onDeleteClick = onDeleteVehicleClick
-                    )
-                }
-
-                items(10) { index ->
-                    VehicleItem(
-                        onEditClick = onEditVehicleClick,
-                        onDeleteClick = onDeleteVehicleClick
-                    )
-                }
-
-                // TODO: Show this when list is empty
-                item {
-                    Text(
-                        text = stringResource(R.string.nothing_to_see_here),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
                 }
 
                 item {

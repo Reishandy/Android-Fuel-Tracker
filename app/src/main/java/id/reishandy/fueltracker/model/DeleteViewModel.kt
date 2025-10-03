@@ -64,20 +64,20 @@ class DeleteViewModel @Inject constructor(
         onSuccess: () -> Unit = { },
     ) {
         viewModelScope.launch {
-            setProcessing(true)
+            try {
+                setProcessing(true)
 
-            // TODO: Edit vehicle in database using vehicleId
-            // TODO: Try catch if error show toast?
+                vehicleRepository.delete(vehicle)
 
-            // TODO: Simulate delay for testing
-            showToast(context, "Vehicle ID: ${vehicle.id} deleted")
-            kotlinx.coroutines.delay(5000)
+                clear()
+                showToast(context, "Vehicle deleted successfully")
 
-            clear()
-            showToast(context, "Vehicle deleted successfully")
-
-            setProcessing(false)
-            onSuccess()
+                onSuccess()
+            } catch (e: Exception) {
+                showToast(context, "Error deleting vehicle: ${e.message}")
+            } finally {
+                setProcessing(false)
+            }
         }
     }
 }

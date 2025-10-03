@@ -35,7 +35,7 @@ data class VehicleFormState(
 
 @HiltViewModel
 class VehicleFormViewModel @Inject constructor(
-    private val vehicleRepository: VehicleRepository // TODO: Use this to add vehicle to database
+    private val vehicleRepository: VehicleRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(VehicleFormState())
     val uiState: StateFlow<VehicleFormState> = _uiState.asStateFlow()
@@ -52,15 +52,15 @@ class VehicleFormViewModel @Inject constructor(
         private set
 
     fun updateName(newName: String) {
-        name = newName
+        name = newName.trim()
     }
 
     fun updateManufacturer(newManufacturer: String) {
-        manufacturer = newManufacturer
+        manufacturer = newManufacturer.trim()
     }
 
     fun updateModel(newModel: String) {
-        model = newModel
+        model = newModel.trim()
     }
 
     fun updateYear(newYear: String) {
@@ -168,21 +168,31 @@ class VehicleFormViewModel @Inject constructor(
         context: Context,
         onSuccess: () -> Unit = { },
     ) {
-//        if (!validateForm()) return
+        if (!validateForm()) return
 
         viewModelScope.launch {
-            setProcessing(true)
-            // TODO: Add vehicle to database
-            // TODO: Try catch if error show toast?
+            try {
+                setProcessing(true)
+                // TODO: Sync cloud?
 
-            // TODO: Simulate delay for testing
-            kotlinx.coroutines.delay(5000)
+                val newVehicle = Vehicle(
+                    name = name,
+                    manufacturer = manufacturer,
+                    model = model,
+                    year = year.toInt(),
+                    maxFuelCapacity = maxFuel.toDouble(),
+                )
+                vehicleRepository.insert(newVehicle)
 
-            resetForm()
-            showToast(context, "Vehicle added successfully")
+                resetForm()
+                showToast(context, "Vehicle added successfully")
 
-            setProcessing(false)
-            onSuccess()
+                onSuccess()
+            } catch (e: Exception) {
+                showToast(context, "Error adding vehicle: ${e.message}", true)
+            } finally {
+                setProcessing(false)
+            }
         }
     }
 
@@ -191,23 +201,30 @@ class VehicleFormViewModel @Inject constructor(
         vehicle: Vehicle,
         onSuccess: () -> Unit = { },
     ) {
-//        if (!validateForm()) return
+        if (!validateForm()) return
 
         viewModelScope.launch {
-            setProcessing(true)
+            try {
+                setProcessing(true)
 
-            // TODO: Edit vehicle in database using vehicleId
-            // TODO: Try catch if error show toast?
+                val updatedVehicle = vehicle.copy(
+                    name = name,
+                    manufacturer = manufacturer,
+                    model = model,
+                    year = year.toInt(),
+                    maxFuelCapacity = maxFuel.toDouble(),
+                )
+                vehicleRepository.update(updatedVehicle)
 
-            // TODO: Simulate delay for testing
-            showToast(context, "Vehicle ID: ${vehicle.id} edited")
-            kotlinx.coroutines.delay(5000)
+                clearEdit()
+                showToast(context, "Vehicle edited successfully")
 
-            clearEdit()
-            showToast(context, "Vehicle edited successfully")
-
-            setProcessing(false)
-            onSuccess()
+                onSuccess()
+            } catch (e: Exception) {
+                showToast(context, "Error editing vehicle: ${e.message}", true)
+            } finally {
+                setProcessing(false)
+            }
         }
     }
 }
