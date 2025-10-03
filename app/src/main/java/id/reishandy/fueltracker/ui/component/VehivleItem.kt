@@ -29,6 +29,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.vehicle.Vehicle
@@ -52,118 +53,123 @@ fun VehicleItem(
     onDeleteClick: (Vehicle) -> Unit = { _ -> }
 ) {
     var showMenu by remember { mutableStateOf(false) }
-
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.CenterEnd // TODO: Make it at end the dropdown menu appear
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = { onClick() },
+                onLongClick = { showMenu = true }
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = dimensionResource(R.dimen.shadow_elevation)
+        )
     ) {
-        Card(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .combinedClickable(
-                    onClick = { onClick() },
-                    onLongClick = { showMenu = true }
-                ),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = dimensionResource(R.dimen.shadow_elevation)
-            )
+                .padding(dimensionResource(R.dimen.padding_medium)),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(dimensionResource(R.dimen.padding_medium)),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.weight(0.6f),
+                verticalArrangement = Arrangement.Center
             ) {
-                Column(
-                    modifier = Modifier.weight(0.6f),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.card_vehicle_manufacturer_model, vehicle.manufacturer, vehicle.model, vehicle.year.toString()),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                Text(
+                    text = stringResource(
+                        R.string.card_vehicle_manufacturer_model,
+                        vehicle.manufacturer,
+                        vehicle.model,
+                        vehicle.year.toString()
+                    ),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
 
-                    Text(
-                        text = vehicle.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                Text(
+                    text = vehicle.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
 
-                Column(
-                    modifier = Modifier.weight(0.5f),
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.card_vehicle_avg, averageConsumption),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+            Column(
+                modifier = Modifier.weight(0.5f),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.card_vehicle_avg, averageConsumption),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
 
-                    Text(
-                        text = stringResource(R.string.card_vehicle_odometer, odometer),
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                Text(
+                    text = stringResource(R.string.card_vehicle_odometer, odometer),
+                    style = MaterialTheme.typography.titleLarge
+                )
 
-                    Text(
-                        text = stringResource(R.string.card_vehicle_tank_capacity, vehicle.maxFuelCapacity.toString()),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+                Text(
+                    text = stringResource(
+                        R.string.card_vehicle_tank_capacity,
+                        vehicle.maxFuelCapacity.toString()
+                    ),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
 
-        DropdownMenu(
-            expanded = showMenu,
-            onDismissRequest = { showMenu = false },
-            shape = MaterialTheme.shapes.medium,
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            shadowElevation = dimensionResource(R.dimen.shadow_elevation)
+        Box(
+            modifier = Modifier.align(Alignment.End),
         ) {
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.edit)) },
-                onClick = {
-                    showMenu = false
-                    onEditClick(vehicle)
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.edit)
-                    )
-                },
-            )
-
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.delete)) },
-                onClick = {
-                    showMenu = false
-                    onDeleteClick(vehicle)
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = stringResource(R.string.delete)
-                    )
-                },
-                colors = MenuDefaults.itemColors().copy(
-                    textColor = MaterialTheme.colorScheme.error,
-                    leadingIconColor = MaterialTheme.colorScheme.error
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false },
+                shape = MaterialTheme.shapes.medium,
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                shadowElevation = dimensionResource(R.dimen.shadow_elevation)
+            ) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.edit)) },
+                    onClick = {
+                        showMenu = false
+                        onEditClick(vehicle)
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.edit)
+                        )
+                    },
                 )
-            )
-        }
 
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.delete)) },
+                    onClick = {
+                        showMenu = false
+                        onDeleteClick(vehicle)
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.delete)
+                        )
+                    },
+                    colors = MenuDefaults.itemColors().copy(
+                        textColor = MaterialTheme.colorScheme.error,
+                        leadingIconColor = MaterialTheme.colorScheme.error
+                    )
+                )
+            }
+        }
     }
 }
 
