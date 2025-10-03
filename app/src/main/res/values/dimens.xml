@@ -11,4 +11,6 @@
     <dimen name="avatar_size_small">32dp</dimen>
 
     <dimen name="progress_indicator_size">20dp</dimen>
+
+    <dimen name="shadow_elevation">8dp</dimen>
 </resources>

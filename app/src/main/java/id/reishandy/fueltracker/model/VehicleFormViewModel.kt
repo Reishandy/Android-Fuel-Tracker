@@ -1,15 +1,14 @@
-package id.reishandy.fueltracker.model.view
+package id.reishandy.fueltracker.model
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleRepository
-import id.reishandy.fueltracker.model.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,6 +29,8 @@ data class VehicleFormState(
     val errorState: VehicleFormErrorState = VehicleFormErrorState(),
     val showSheet: Boolean = false,
     val isProcessing: Boolean = false,
+    val isEdit: Boolean = false,
+    val selectedVehicle: Vehicle? = null,
 )
 
 @HiltViewModel
@@ -68,6 +69,32 @@ class VehicleFormViewModel @Inject constructor(
 
     fun updateMaxFuel(newMaxFuel: String) {
         maxFuel = newMaxFuel
+    }
+
+    fun setupEdit(
+        vehicle: Vehicle,
+    ) {
+        name = vehicle.name
+        manufacturer = vehicle.manufacturer
+        model = vehicle.model
+        year = vehicle.year.toString()
+        maxFuel = vehicle.maxFuelCapacity.toString()
+        _uiState.update {
+            it.copy(
+                isEdit = true,
+                selectedVehicle = vehicle,
+            )
+        }
+    }
+
+    fun clearEdit() {
+        _uiState.update {
+            it.copy(
+                isEdit = false,
+                selectedVehicle = null,
+            )
+        }
+        resetForm()
     }
 
     fun resetForm() {
@@ -141,15 +168,43 @@ class VehicleFormViewModel @Inject constructor(
         context: Context,
         onSuccess: () -> Unit = { },
     ) {
-        if (!validateForm()) return
+//        if (!validateForm()) return
 
         viewModelScope.launch {
             setProcessing(true)
             // TODO: Add vehicle to database
             // TODO: Try catch if error show toast?
 
+            // TODO: Simulate delay for testing
+            kotlinx.coroutines.delay(5000)
+
             resetForm()
             showToast(context, "Vehicle added successfully")
+
+            setProcessing(false)
+            onSuccess()
+        }
+    }
+
+    fun updateVehicle(
+        context: Context,
+        vehicle: Vehicle,
+        onSuccess: () -> Unit = { },
+    ) {
+//        if (!validateForm()) return
+
+        viewModelScope.launch {
+            setProcessing(true)
+
+            // TODO: Edit vehicle in database using vehicleId
+            // TODO: Try catch if error show toast?
+
+            // TODO: Simulate delay for testing
+            showToast(context, "Vehicle ID: ${vehicle.id} edited")
+            kotlinx.coroutines.delay(5000)
+
+            clearEdit()
+            showToast(context, "Vehicle edited successfully")
 
             setProcessing(false)
             onSuccess()

@@ -16,7 +16,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import id.reishandy.fueltracker.model.view.VehicleFormViewModel
+import id.reishandy.fueltracker.model.DeleteViewModel
+import id.reishandy.fueltracker.model.VehicleFormViewModel
+import id.reishandy.fueltracker.ui.component.DeleteBottomSheet
 import id.reishandy.fueltracker.ui.component.VehicleFormBottomSheet
 import id.reishandy.fueltracker.ui.view.Home
 import kotlinx.coroutines.CoroutineScope
@@ -38,10 +40,15 @@ fun FuelTracker() {
     val scope: CoroutineScope = rememberCoroutineScope()
 
     val vehicleFormViewModel: VehicleFormViewModel = hiltViewModel()
+    val deleteViewModel: DeleteViewModel = hiltViewModel()
 
     val vehicleFormUiState by vehicleFormViewModel.uiState.collectAsState()
+    val deleteUiState by deleteViewModel.uiState.collectAsState()
 
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    val deleteSheetState = androidx.compose.material3.rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
 
@@ -55,6 +62,14 @@ fun FuelTracker() {
                 Home(
                     onAddVehicleClick = {
                         vehicleFormViewModel.showSheet()
+                    },
+                    onEditVehicleClick = { vehicle ->
+                        vehicleFormViewModel.setupEdit(vehicle)
+                        vehicleFormViewModel.showSheet()
+                    },
+                    onDeleteVehicleClick = { vehicle ->
+                        deleteViewModel.updateSelectedVehicle(vehicle)
+                        deleteViewModel.showSheet()
                     }
                 )
             }
@@ -63,26 +78,42 @@ fun FuelTracker() {
         VehicleFormBottomSheet(
             onDismissRequest = {
                 vehicleFormViewModel.hideSheet()
+                if (vehicleFormUiState.isEdit) vehicleFormViewModel.clearEdit()
             },
             onCloseButtonClick = {
                 scope.launch {
                     sheetState.hide()
                     vehicleFormViewModel.hideSheet()
+                    if (vehicleFormUiState.isEdit) vehicleFormViewModel.clearEdit()
                 }
             },
             onSaveButtonClick = {
-                vehicleFormViewModel.addVehicle(
-                    context = context,
-                    onSuccess = {
-                        scope.launch {
-                            sheetState.hide()
-                            vehicleFormViewModel.hideSheet()
+                if (vehicleFormUiState.isEdit) {
+                    vehicleFormViewModel.updateVehicle(
+                        context = context,
+                        vehicle = vehicleFormUiState.selectedVehicle!!,
+                        onSuccess = {
+                            scope.launch {
+                                sheetState.hide()
+                                vehicleFormViewModel.hideSheet()
+                            }
                         }
-                    }
-                )
+                    )
+                } else {
+                    vehicleFormViewModel.addVehicle(
+                        context = context,
+                        onSuccess = {
+                            scope.launch {
+                                sheetState.hide()
+                                vehicleFormViewModel.hideSheet()
+                            }
+                        }
+                    )
+                }
             },
             sheetState = sheetState,
             isProcessing = vehicleFormUiState.isProcessing,
+            isEdit = vehicleFormUiState.isEdit,
             showSheet = vehicleFormUiState.showSheet,
             nameValue = vehicleFormViewModel.name,
             onNameValueChange = { vehicleFormViewModel.updateName(it) },
@@ -100,6 +131,34 @@ fun FuelTracker() {
             onMaxFuelValueChange = { vehicleFormViewModel.updateMaxFuel(it) },
             maxFuelError = vehicleFormUiState.errorState.maxFuelError
         )
+
+        DeleteBottomSheet(
+            onDismissRequest = {
+                deleteViewModel.hideSheet()
+            },
+            onCloseButtonClick = {
+                scope.launch {
+                    deleteSheetState.hide()
+                    deleteViewModel.hideSheet()
+                }
+            },
+            onDeleteClick = {
+                deleteViewModel.deleteVehicle(
+                    context = context,
+                    vehicle = deleteUiState.selectedVehicle!!,
+                    onSuccess = {
+                        scope.launch {
+                            deleteSheetState.hide()
+                            deleteViewModel.hideSheet()
+                        }
+                    }
+                )
+            },
+            sheetState = deleteSheetState,
+            isProcessing = deleteUiState.isProcessing,
+            showSheet = deleteUiState.showSheet,
+            name = deleteUiState.name
+        )
     }
 }
 
@@ -111,3 +170,4 @@ fun FuelTracker() {
 //  - Statistics (charts?)
 //  - Backup and restore (google drive?)
 //  - Google login
+//  - Sync every CRUD or db update

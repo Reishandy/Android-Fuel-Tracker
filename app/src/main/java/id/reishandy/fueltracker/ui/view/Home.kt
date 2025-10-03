@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
+import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.ui.component.HomeHeader
 import id.reishandy.fueltracker.ui.component.VehicleItem
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
@@ -33,6 +34,8 @@ import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 fun Home(
     modifier: Modifier = Modifier,
     onAddVehicleClick: () -> Unit = { },
+    onEditVehicleClick: (Vehicle) -> Unit = { _ -> },
+    onDeleteVehicleClick: (Vehicle) -> Unit = { _ -> }
 ) {
     // TODO: Receive list of vehicles from ViewModel
     // TODO: Handle Login
@@ -65,8 +68,41 @@ fun Home(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
             ) {
+                item {
+                    VehicleItem(
+                        vehicle = Vehicle(
+                            id = 1,
+                            name = "My Car",
+                            manufacturer = "Toyota",
+                            model = "Avanza",
+                            year = 2020,
+                            maxFuelCapacity = 45.0
+                        ),
+                        onEditClick = onEditVehicleClick,
+                        onDeleteClick = onDeleteVehicleClick
+                    )
+                }
+
+                item {
+                    VehicleItem(
+                        vehicle = Vehicle(
+                            id = 2,
+                            name = "My Motor",
+                            manufacturer = "Yamaha",
+                            model = "Nmax",
+                            year = 2021,
+                            maxFuelCapacity = 7.1
+                        ),
+                        onEditClick = onEditVehicleClick,
+                        onDeleteClick = onDeleteVehicleClick
+                    )
+                }
+
                 items(10) { index ->
-                    VehicleItem()
+                    VehicleItem(
+                        onEditClick = onEditVehicleClick,
+                        onDeleteClick = onDeleteVehicleClick
+                    )
                 }
 
                 // TODO: Show this when list is empty

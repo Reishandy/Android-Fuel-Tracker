@@ -1,0 +1,83 @@
+package id.reishandy.fueltracker.model
+
+import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import id.reishandy.fueltracker.data.vehicle.Vehicle
+import id.reishandy.fueltracker.data.vehicle.VehicleRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+data class DeleteState(
+    val showSheet: Boolean = false,
+    val isProcessing: Boolean = false,
+    val name: String = "",
+    val selectedVehicle: Vehicle? = null,
+)
+
+@HiltViewModel
+class DeleteViewModel @Inject constructor(
+    private val vehicleRepository: VehicleRepository
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(DeleteState())
+    val uiState: StateFlow<DeleteState> = _uiState.asStateFlow()
+
+    fun showSheet() {
+        _uiState.update { it.copy(showSheet = true) }
+    }
+
+    fun hideSheet() {
+        _uiState.update { it.copy(showSheet = false) }
+    }
+
+    fun setProcessing(isProcessing: Boolean) {
+        _uiState.update { it.copy(isProcessing = isProcessing) }
+    }
+
+    fun updateSelectedVehicle(vehicle: Vehicle?) {
+        _uiState.update {
+            it.copy(
+                name = vehicle?.name ?: "N/A",
+                selectedVehicle = vehicle
+            )
+        }
+    }
+
+    fun clear() {
+        _uiState.update {
+            it.copy(
+                name = "",
+                selectedVehicle = null
+                // TODO: Fuel
+            )
+        }
+    }
+
+    fun deleteVehicle(
+        context: Context,
+        vehicle: Vehicle,
+        onSuccess: () -> Unit = { },
+    ) {
+        viewModelScope.launch {
+            setProcessing(true)
+
+            // TODO: Edit vehicle in database using vehicleId
+            // TODO: Try catch if error show toast?
+
+            // TODO: Simulate delay for testing
+            showToast(context, "Vehicle ID: ${vehicle.id} deleted")
+            kotlinx.coroutines.delay(5000)
+
+            clear()
+            showToast(context, "Vehicle deleted successfully")
+
+            setProcessing(false)
+            onSuccess()
+        }
+    }
+}

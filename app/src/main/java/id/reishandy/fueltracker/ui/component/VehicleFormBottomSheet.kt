@@ -61,6 +61,7 @@ fun VehicleFormBottomSheet(
     ),
     showSheet: Boolean = true,
     isProcessing: Boolean = false,
+    isEdit: Boolean = false,
     nameValue: String = "",
     onNameValueChange: (String) -> Unit = { },
     nameError: String? = null,
@@ -86,10 +87,10 @@ fun VehicleFormBottomSheet(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = dimensionResource(R.dimen.padding_small))
+                    .padding(horizontal = dimensionResource(R.dimen.padding_medium))
             ) {
                 Text(
-                    text = stringResource(R.string.add_new_vehicle),
+                    text = stringResource(if (isEdit) R.string.edit_vehicle else R.string.add_new_vehicle),
                     modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Center
@@ -118,6 +119,7 @@ fun VehicleFormBottomSheet(
                             imeAction = ImeAction.Next
                         ),
                         singleLine = true,
+                        shape = MaterialTheme.shapes.small
                     )
 
                     TextField(
@@ -139,6 +141,7 @@ fun VehicleFormBottomSheet(
                             imeAction = ImeAction.Next
                         ),
                         singleLine = true,
+                        shape = MaterialTheme.shapes.small
                     )
 
                     TextField(
@@ -157,6 +160,7 @@ fun VehicleFormBottomSheet(
                             imeAction = ImeAction.Next
                         ),
                         singleLine = true,
+                        shape = MaterialTheme.shapes.small
                     )
 
                     TextField(
@@ -179,6 +183,7 @@ fun VehicleFormBottomSheet(
                             imeAction = ImeAction.Next,
                         ),
                         singleLine = true,
+                        shape = MaterialTheme.shapes.small
                     )
 
                     TextField(
@@ -204,6 +209,7 @@ fun VehicleFormBottomSheet(
                             imeAction = ImeAction.Done,
                         ),
                         singleLine = true,
+                        shape = MaterialTheme.shapes.small
                     )
                 }
 
