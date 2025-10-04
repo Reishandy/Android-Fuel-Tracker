@@ -81,6 +81,7 @@ class VehicleFormViewModel @Inject constructor(
         maxFuel = vehicle.maxFuelCapacity.toString()
         _uiState.update {
             it.copy(
+                errorState = VehicleFormErrorState(),
                 isEdit = true,
                 selectedVehicle = vehicle,
             )
@@ -90,6 +91,7 @@ class VehicleFormViewModel @Inject constructor(
     fun clearEdit() {
         _uiState.update {
             it.copy(
+                errorState = VehicleFormErrorState(),
                 isEdit = false,
                 selectedVehicle = null,
             )
