@@ -37,6 +37,9 @@ fun DetailTopButtons(
             colors = ButtonDefaults.buttonColors().copy(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            ),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = dimensionResource(R.dimen.shadow_elevation)
             )
         ) {
             Icon(
@@ -54,6 +57,9 @@ fun DetailTopButtons(
                 colors = ButtonDefaults.buttonColors().copy(
                     containerColor = MaterialTheme.colorScheme.errorContainer,
                     contentColor = MaterialTheme.colorScheme.onErrorContainer
+                ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = dimensionResource(R.dimen.shadow_elevation)
                 )
             ) {
                 Text(text = stringResource(R.string.delete))
@@ -65,6 +71,9 @@ fun DetailTopButtons(
                 colors = ButtonDefaults.buttonColors().copy(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = dimensionResource(R.dimen.shadow_elevation)
                 )
             ) {
                 Text(text = stringResource(R.string.edit))
