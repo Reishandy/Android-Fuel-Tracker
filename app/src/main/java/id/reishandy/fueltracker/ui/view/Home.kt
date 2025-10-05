@@ -3,7 +3,6 @@ package id.reishandy.fueltracker.ui.view
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,6 +27,7 @@ import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
 import id.reishandy.fueltracker.ui.component.HomeHeader
 import id.reishandy.fueltracker.ui.component.VehicleItem
+import id.reishandy.fueltracker.ui.component.SectionDivider
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 
 @Composable
@@ -51,21 +50,9 @@ fun Home(
         ) {
             HomeHeader()
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = dimensionResource(R.dimen.padding_small)),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
-            ) {
-                Text(
-                    text = stringResource(R.string.your_vehicles),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                HorizontalDivider()
-            }
+            SectionDivider(
+                title = R.string.your_vehicles
+            )
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
@@ -116,6 +103,7 @@ fun Home(
                 )
             },
             text = { Text(text = stringResource(R.string.add_vehicle)) },
+            shape = MaterialTheme.shapes.medium
         )
     }
 }

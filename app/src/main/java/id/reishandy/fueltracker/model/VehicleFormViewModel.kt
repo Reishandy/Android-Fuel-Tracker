@@ -52,15 +52,15 @@ class VehicleFormViewModel @Inject constructor(
         private set
 
     fun updateName(newName: String) {
-        name = newName.trim()
+        name = newName
     }
 
     fun updateManufacturer(newManufacturer: String) {
-        manufacturer = newManufacturer.trim()
+        manufacturer = newManufacturer
     }
 
     fun updateModel(newModel: String) {
-        model = newModel.trim()
+        model = newModel
     }
 
     fun updateYear(newYear: String) {
@@ -178,15 +178,14 @@ class VehicleFormViewModel @Inject constructor(
                 // TODO: Sync cloud?
 
                 val newVehicle = Vehicle(
-                    name = name,
-                    manufacturer = manufacturer,
-                    model = model,
+                    name = name.trim(),
+                    manufacturer = manufacturer.trim(),
+                    model = model.trim(),
                     year = year.toInt(),
                     maxFuelCapacity = maxFuel.toDouble(),
                 )
                 vehicleRepository.insert(newVehicle)
 
-                resetForm()
                 showToast(context, "Vehicle added successfully")
 
                 onSuccess()
@@ -201,7 +200,7 @@ class VehicleFormViewModel @Inject constructor(
     fun updateVehicle(
         context: Context,
         vehicle: Vehicle,
-        onSuccess: () -> Unit = { },
+                onSuccess: (Vehicle) -> Unit = { _ -> },
     ) {
         if (!validateForm()) return
 
@@ -210,18 +209,17 @@ class VehicleFormViewModel @Inject constructor(
                 setProcessing(true)
 
                 val updatedVehicle = vehicle.copy(
-                    name = name,
-                    manufacturer = manufacturer,
-                    model = model,
+                    name = name.trim(),
+                    manufacturer = manufacturer.trim(),
+                    model = model.trim(),
                     year = year.toInt(),
                     maxFuelCapacity = maxFuel.toDouble(),
                 )
                 vehicleRepository.update(updatedVehicle)
 
-                clearEdit()
                 showToast(context, "Vehicle edited successfully")
 
-                onSuccess()
+                onSuccess(updatedVehicle)
             } catch (e: Exception) {
                 showToast(context, "Error editing vehicle: ${e.message}", true)
             } finally {

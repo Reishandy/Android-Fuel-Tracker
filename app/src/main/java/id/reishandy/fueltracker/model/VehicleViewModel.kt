@@ -1,8 +1,10 @@
 package id.reishandy.fueltracker.model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleRepository
 import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +16,7 @@ import javax.inject.Inject
 
 data class VehicleState(
     val vehiclesWithStats: List<VehicleWithStats> = emptyList(),
+    val selectedVehicleWithStats: VehicleWithStats? = null,
 )
 
 @HiltViewModel
@@ -32,6 +35,19 @@ class VehicleViewModel @Inject constructor(
         viewModelScope.launch {
             vehicleRepository.getAllWithStats().collect { list ->
                 _uiState.update { it.copy(vehiclesWithStats = list) }
+            }
+        }
+    }
+
+    fun updateSelectedVehicleWithStats(vehicleWithStats: VehicleWithStats?) {
+        _uiState.update { it.copy(selectedVehicleWithStats = vehicleWithStats) }
+    }
+
+    fun updateSelectedVehicleAfterEdit(updatedVehicle: Vehicle) {
+        val currentSelected = _uiState.value.selectedVehicleWithStats
+        if (currentSelected != null && currentSelected.vehicle.id == updatedVehicle.id) {
+            _uiState.update { state ->
+                state.copy(selectedVehicleWithStats = currentSelected.copy(vehicle = updatedVehicle))
             }
         }
     }

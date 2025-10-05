@@ -72,6 +72,7 @@ fun DeleteBottomSheet(
                         modifier = Modifier
                             .fillMaxWidth(),
                         enabled = !isProcessing,
+                        shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.buttonColors().copy(
                             containerColor = MaterialTheme.colorScheme.errorContainer,
                             contentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -92,6 +93,7 @@ fun DeleteBottomSheet(
                         onClick = onCloseButtonClick,
                         modifier = Modifier
                             .fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.buttonColors().copy(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer

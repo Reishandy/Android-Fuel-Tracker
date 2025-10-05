@@ -224,6 +224,7 @@ fun VehicleFormBottomSheet(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(0.5f),
+                        shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.buttonColors().copy(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -238,6 +239,7 @@ fun VehicleFormBottomSheet(
                             .fillMaxWidth()
                             .weight(0.5f),
                         enabled = !isProcessing,
+                        shape = MaterialTheme.shapes.medium,
                     ) {
                         if (isProcessing) {
                             CircularProgressIndicator(

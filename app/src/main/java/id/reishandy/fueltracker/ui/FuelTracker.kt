@@ -19,8 +19,10 @@ import androidx.navigation.compose.rememberNavController
 import id.reishandy.fueltracker.model.DeleteViewModel
 import id.reishandy.fueltracker.model.VehicleFormViewModel
 import id.reishandy.fueltracker.model.VehicleViewModel
+import id.reishandy.fueltracker.model.showToast
 import id.reishandy.fueltracker.ui.component.DeleteBottomSheet
 import id.reishandy.fueltracker.ui.component.VehicleFormBottomSheet
+import id.reishandy.fueltracker.ui.view.Detail
 import id.reishandy.fueltracker.ui.view.Home
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -73,14 +75,33 @@ fun FuelTracker() {
                         deleteViewModel.showSheet()
                     },
                     onVehicleClick = { vehicleWithStats ->
-                        /* TODO: Detail view model pass data */
+                        vehicleViewModel.updateSelectedVehicleWithStats(vehicleWithStats)
                         navController.navigate(FuelTrackerNav.VEHICLE_DETAIL.name)
                     }
                 )
             }
 
             composable(route = FuelTrackerNav.VEHICLE_DETAIL.name) {
-                /* TODO: Vehicle Detail Screen */
+                if (vehicleUiState.selectedVehicleWithStats == null) {
+                    navController.popBackStack()
+                    showToast(context, "Selected vehicle not found, should not be possible", true)
+                }
+
+                Detail(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onEditClick = {
+                        vehicleFormViewModel.setupEdit(vehicleUiState.selectedVehicleWithStats!!.vehicle)
+                        vehicleFormViewModel.showSheet()
+                    },
+                    onDeleteClick = {
+                        deleteViewModel.setIsOnDetails(true)
+                        deleteViewModel.updateSelectedVehicle(vehicleUiState.selectedVehicleWithStats!!.vehicle)
+                        deleteViewModel.showSheet()
+                    },
+                    vehicleWithStats = vehicleUiState.selectedVehicleWithStats!!
+                )
             }
         }
 
@@ -101,9 +122,11 @@ fun FuelTracker() {
                     vehicleFormViewModel.updateVehicle(
                         context = context,
                         vehicle = vehicleFormUiState.selectedVehicle!!,
-                        onSuccess = {
+                        onSuccess = { updatedVehicle ->
+                            vehicleViewModel.updateSelectedVehicleAfterEdit(updatedVehicle)
                             scope.launch {
                                 sheetState.hide()
+                                vehicleFormViewModel.clearEdit()
                                 vehicleFormViewModel.hideSheet()
                             }
                         }
@@ -114,6 +137,7 @@ fun FuelTracker() {
                         onSuccess = {
                             scope.launch {
                                 sheetState.hide()
+                                vehicleFormViewModel.resetForm()
                                 vehicleFormViewModel.hideSheet()
                             }
                         }
@@ -157,7 +181,13 @@ fun FuelTracker() {
                     vehicle = deleteUiState.selectedVehicle!!,
                     onSuccess = {
                         scope.launch {
+                            if (deleteViewModel.isOnDetails) {
+                                deleteViewModel.setIsOnDetails(false)
+                                navController.popBackStack()
+                            }
+
                             deleteSheetState.hide()
+                            deleteViewModel.clear()
                             deleteViewModel.hideSheet()
                         }
                     }

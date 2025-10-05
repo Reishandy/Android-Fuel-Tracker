@@ -1,6 +1,9 @@
 package id.reishandy.fueltracker.model
 
 import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +29,13 @@ class DeleteViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DeleteState())
     val uiState: StateFlow<DeleteState> = _uiState.asStateFlow()
+
+    var isOnDetails by mutableStateOf(false)
+        private set
+
+    fun setIsOnDetails(value: Boolean) {
+        isOnDetails = value
+    }
 
     fun showSheet() {
         _uiState.update { it.copy(showSheet = true) }
@@ -69,7 +79,6 @@ class DeleteViewModel @Inject constructor(
 
                 vehicleRepository.delete(vehicle)
 
-                clear()
                 showToast(context, "Vehicle deleted successfully")
 
                 onSuccess()
