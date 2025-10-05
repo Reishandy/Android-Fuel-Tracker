@@ -1,5 +1,6 @@
 package id.reishandy.fueltracker.data.vehicle
 
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class VehicleRepository @Inject constructor(
@@ -17,7 +18,11 @@ class VehicleRepository @Inject constructor(
         vehicleDao.update(vehicle)
     }
 
-    fun getAllVehicles() = vehicleDao.getAllVehicles()
+    fun getAll() = vehicleDao.getAll()
 
-    suspend fun getVehicleById(id: Long) = vehicleDao.getVehicleById(id)
+    suspend fun getById(id: Long) = vehicleDao.getById(id)
+
+    fun getAllWithStats(): Flow<List<VehicleWithStats>> = vehicleDao.getAllWithStats()
+
+    suspend fun getByIdWithStats(id: Long): VehicleWithStats? = vehicleDao.getByIdWithStats(id)
 }

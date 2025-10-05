@@ -60,7 +60,7 @@ fun FuelTracker() {
         ) {
             composable(route = FuelTrackerNav.HOME.name) {
                 Home(
-                    vehicles = vehicleUiState.vehicles,
+                    vehiclesWithStats = vehicleUiState.vehiclesWithStats,
                     onAddVehicleClick = {
                         vehicleFormViewModel.showSheet()
                     },
@@ -71,6 +71,10 @@ fun FuelTracker() {
                     onDeleteVehicleClick = { vehicle ->
                         deleteViewModel.updateSelectedVehicle(vehicle)
                         deleteViewModel.showSheet()
+                    },
+                    onVehicleClick = { vehicleWithStats ->
+                        /* TODO: Detail view model pass data */
+                        navController.navigate(FuelTrackerNav.VEHICLE_DETAIL.name)
                     }
                 )
             }
@@ -170,6 +174,6 @@ fun FuelTracker() {
 // TODO: Features and stuff
 //  - CRUD Refueling
 //  - Statistics (charts?)
-//  - Backup and restore (google drive?)
 //  - Google login
+//  - Backup and restore (google drive?)
 //  - Sync every CRUD or db update

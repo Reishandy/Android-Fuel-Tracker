@@ -3,8 +3,8 @@ package id.reishandy.fueltracker.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleRepository
+import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class VehicleState(
-    val vehicles: List<Vehicle> = emptyList(),
+    val vehiclesWithStats: List<VehicleWithStats> = emptyList(),
 )
 
 @HiltViewModel
@@ -30,9 +30,8 @@ class VehicleViewModel @Inject constructor(
             e.printStackTrace()
         }
         viewModelScope.launch {
-            // TODO: Also get the avg and odometer
-            vehicleRepository.getAllVehicles().collect { list ->
-                _uiState.update { it.copy(vehicles = list) }
+            vehicleRepository.getAllWithStats().collect { list ->
+                _uiState.update { it.copy(vehiclesWithStats = list) }
             }
         }
     }

@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.vehicle.Vehicle
+import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
 import id.reishandy.fueltracker.ui.component.HomeHeader
 import id.reishandy.fueltracker.ui.component.VehicleItem
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
@@ -33,10 +34,11 @@ import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 @Composable
 fun Home(
     modifier: Modifier = Modifier,
-    vehicles: List<Vehicle> = emptyList(),
+    vehiclesWithStats: List<VehicleWithStats> = emptyList(),
     onAddVehicleClick: () -> Unit = { },
     onEditVehicleClick: (Vehicle) -> Unit = { _ -> },
-    onDeleteVehicleClick: (Vehicle) -> Unit = { _ -> }
+    onDeleteVehicleClick: (Vehicle) -> Unit = { _ -> },
+    onVehicleClick: (VehicleWithStats) -> Unit = { _ -> }
 ) {
     // TODO: Handle Login
     Box(
@@ -68,11 +70,12 @@ fun Home(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
             ) {
-                if (vehicles.isNotEmpty()) {
-                    items(vehicles.size) { index ->
-                        val vehicle = vehicles[index]
+                if (vehiclesWithStats.isNotEmpty()) {
+                    items(vehiclesWithStats.size) { index ->
+                        val vehicleWithStats = vehiclesWithStats[index]
                         VehicleItem(
-                            vehicle = vehicle,
+                            vehicleWithStats = vehicleWithStats,
+                            onClick = { onVehicleClick(vehicleWithStats) },
                             onEditClick = onEditVehicleClick,
                             onDeleteClick = onDeleteVehicleClick
                         )
@@ -123,30 +126,54 @@ internal fun PreviewHome() {
     FuelTrackerTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxSize()) {
             Home(
-                vehicles = listOf(
-                    Vehicle(
-                        id = 1,
-                        name = "My Car",
-                        manufacturer = "Toyota",
-                        model = "Avanza",
-                        year = 2010,
-                        maxFuelCapacity = 45.0
+                vehiclesWithStats = listOf(
+                    VehicleWithStats(
+                        vehicle = Vehicle(
+                            id = 1,
+                            name = "My Car",
+                            manufacturer = "Toyota",
+                            model = "Avanza",
+                            year = 2010,
+                            maxFuelCapacity = 45.0
+                        ),
+                        latestOdometer = 150000.0,
+                        averageFuelEconomy = 14.5
                     ),
-                    Vehicle(
-                        id = 2,
-                        name = "My Motorcycle",
-                        manufacturer = "Yamaha",
-                        model = "NMAX",
-                        year = 2020,
-                        maxFuelCapacity = 7.1
+                    VehicleWithStats(
+                        vehicle = Vehicle(
+                            id = 2,
+                            name = "My Motorcycle",
+                            manufacturer = "Honda",
+                            model = "Vario 150",
+                            year = 2019,
+                            maxFuelCapacity = 5.5
+                        ),
+                        latestOdometer = 25000.0,
+                        averageFuelEconomy = 45.0
                     ),
-                    Vehicle(
-                        id = 3,
-                        name = "My Truck",
-                        manufacturer = "Hino",
-                        model = "Dutro",
-                        year = 2015,
-                        maxFuelCapacity = 100.0
+                    VehicleWithStats(
+                        vehicle = Vehicle(
+                            id = 3,
+                            name = "My Second Motorcycle",
+                            manufacturer = "Yamaha",
+                            model = "NMAX 155",
+                            year = 2021,
+                            maxFuelCapacity = 7.1
+                        ),
+                        latestOdometer = 12000.0,
+                        averageFuelEconomy = 42.0
+                    ),
+                    VehicleWithStats(
+                        vehicle = Vehicle(
+                            id = 4,
+                            name = "My Old Car",
+                            manufacturer = "Daihatsu",
+                            model = "Xenia",
+                            year = 2005,
+                            maxFuelCapacity = 42.0
+                        ),
+                        latestOdometer = 220000.0,
+                        averageFuelEconomy = 10.5
                     )
                 )
             )

@@ -29,29 +29,32 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.vehicle.Vehicle
+import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
+import java.text.DecimalFormat
 
 @Composable
 fun VehicleItem(
     modifier: Modifier = Modifier,
-    vehicle: Vehicle = Vehicle(
-        id = 1,
-        name = "Placeholder",
-        manufacturer = "Placeholder",
-        model = "Placeholder",
-        year = 0,
-        maxFuelCapacity = 0.0
+    vehicleWithStats: VehicleWithStats = VehicleWithStats(
+        vehicle = Vehicle(
+            id = 1,
+            name = "Placeholder",
+            manufacturer = "Placeholder",
+            model = "Placeholder",
+            year = 0,
+            maxFuelCapacity = 0.0
+        ),
+        latestOdometer = 0.0,
+        averageFuelEconomy = 0.0,
     ),
-    odometer: String = "0",
-    averageConsumption: String = "0.0",
     onClick: () -> Unit = { },
     onEditClick: (Vehicle) -> Unit = { _ -> },
     onDeleteClick: (Vehicle) -> Unit = { _ -> }
 ) {
+    val formatter = DecimalFormat("#,###")
     var showMenu by remember { mutableStateOf(false) }
     Card(
         modifier = modifier
@@ -82,9 +85,9 @@ fun VehicleItem(
                 Text(
                     text = stringResource(
                         R.string.card_vehicle_manufacturer_model,
-                        vehicle.manufacturer,
-                        vehicle.model,
-                        vehicle.year.toString()
+                        vehicleWithStats.vehicle.manufacturer,
+                        vehicleWithStats.vehicle.model,
+                        vehicleWithStats.vehicle.year.toString()
                     ),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -93,7 +96,7 @@ fun VehicleItem(
                 )
 
                 Text(
-                    text = vehicle.name,
+                    text = vehicleWithStats.vehicle.name,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -106,20 +109,26 @@ fun VehicleItem(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = stringResource(R.string.card_vehicle_avg, averageConsumption),
+                    text = stringResource(
+                        R.string.card_vehicle_avg,
+                        vehicleWithStats.averageFuelEconomy
+                    ),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
                 Text(
-                    text = stringResource(R.string.card_vehicle_odometer, odometer),
+                    text = stringResource(
+                        R.string.card_vehicle_odometer,
+                        formatter.format(vehicleWithStats.latestOdometer)
+                    ),
                     style = MaterialTheme.typography.titleLarge
                 )
 
                 Text(
                     text = stringResource(
                         R.string.card_vehicle_tank_capacity,
-                        vehicle.maxFuelCapacity.toString()
+                        vehicleWithStats.vehicle.maxFuelCapacity.toString()
                     ),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -141,7 +150,7 @@ fun VehicleItem(
                     text = { Text(stringResource(R.string.edit)) },
                     onClick = {
                         showMenu = false
-                        onEditClick(vehicle)
+                        onEditClick(vehicleWithStats.vehicle)
                     },
                     leadingIcon = {
                         Icon(
@@ -155,7 +164,7 @@ fun VehicleItem(
                     text = { Text(stringResource(R.string.delete)) },
                     onClick = {
                         showMenu = false
-                        onDeleteClick(vehicle)
+                        onDeleteClick(vehicleWithStats.vehicle)
                     },
                     leadingIcon = {
                         Icon(
@@ -178,16 +187,18 @@ fun VehicleItem(
 internal fun PreviewVehicleItem() {
     FuelTrackerTheme(darkTheme = true) {
         VehicleItem(
-            vehicle = Vehicle(
-                id = 1,
-                name = "Main Motorcycle",
-                manufacturer = "Honda",
-                model = "PCX 160",
-                year = 2024,
-                maxFuelCapacity = 8.1
+            vehicleWithStats = VehicleWithStats(
+                vehicle = Vehicle(
+                    id = 1,
+                    name = "Main Motorcycle",
+                    manufacturer = "Honda",
+                    model = "PCX 160",
+                    year = 2024,
+                    maxFuelCapacity = 8.1
+                ),
+                latestOdometer = 980000.0,
+                averageFuelEconomy = 39.99
             ),
-            odometer = "980,000",
-            averageConsumption = "39.99",
         )
     }
 }

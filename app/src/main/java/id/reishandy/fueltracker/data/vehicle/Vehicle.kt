@@ -2,9 +2,13 @@ package id.reishandy.fueltracker.data.vehicle
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "vehicle")
+@Entity(
+    tableName = "vehicles",
+    indices = [Index(value = ["created_at"])]
+)
 data class Vehicle(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
