@@ -23,11 +23,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
+import id.reishandy.fueltracker.data.fuel.Fuel
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
 import id.reishandy.fueltracker.ui.component.DetailHeader
 import id.reishandy.fueltracker.ui.component.DetailStats
 import id.reishandy.fueltracker.ui.component.DetailTopButtons
+import id.reishandy.fueltracker.ui.component.FuelItem
 import id.reishandy.fueltracker.ui.component.SectionDivider
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 
@@ -71,6 +73,10 @@ fun Detail(
                 onDeleteClick = onDeleteClick
             )
 
+            DetailHeader(
+                vehicleWithStats = vehicleWithStats
+            )
+
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
             ) {
@@ -78,10 +84,6 @@ fun Detail(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
                     ) {
-                        DetailHeader(
-                            vehicleWithStats = vehicleWithStats
-                        )
-
                         SectionDivider(title = R.string.vehicle_stats)
 
                         DetailStats(
@@ -92,8 +94,26 @@ fun Detail(
                     }
                 }
 
-                if (false) {
+                if (true) {
                     // TODO: Implement recent refuel list
+                    items(5) {
+                        FuelItem(
+                            fuel = Fuel(
+                                id = 1,
+                                vehicleId = 1,
+                                date = 0,
+                                odometer = 15000.0,
+                                trip = 250.0,
+                                fuelAdded = 5.0,
+                                fuelType = "Pertalite",
+                                pricePerLiter = 10_000.0,
+                                totalCost = 50_000.0,
+                                fuelEconomy = 50.0,
+                                costPerKm = 200.0,
+                                fuelRemaining = 3.0
+                            )
+                        )
+                    }
                 } else {
                     item {
                         Text(

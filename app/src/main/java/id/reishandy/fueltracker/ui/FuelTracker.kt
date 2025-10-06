@@ -208,3 +208,4 @@ fun FuelTracker() {
 //  - Backup and restore (google drive?)
 //  - Sync every CRUD or db update
 //  - Locale setting
+//  - Animations

@@ -9,6 +9,7 @@
     <string name="km_abbr_value">%1s km</string>
     <string name="vehicle_tank_capacity">Max. %1s L</string>
     <string name="liter_abbr_value">%1s L</string>
+    <string name="per_liter_abbr_value">%1s/L</string>
     <string name="add_new_vehicle">Add New Vehicle</string>
     <string name="vehicle_name">Vehicle Name</string>
     <string name="vehicle_name_placeholder">e.g. Main Vehicle</string>
@@ -41,6 +42,6 @@
     <string name="total_refuel">Total Refuel</string>
     <string name="total_spent">Total Spent</string>
     <string name="avg_refueled">Avg. Refueled</string>
-        <string name="avg_spent_per_refuel">Avg. Spent per Refuel</string>
+    <string name="avg_spent_per_refuel">Avg. Spent per Refuel</string>
     <string name="record_refuel">Record Refuel</string>
 </resources>
