@@ -223,3 +223,4 @@ fun FuelTracker() {
 //  - Sync every CRUD or db update
 //  - Locale setting
 //  - Animations
+//  - Custom splash screen
