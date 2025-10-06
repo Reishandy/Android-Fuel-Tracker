@@ -44,4 +44,11 @@
     <string name="avg_refueled">Avg. Refueled</string>
     <string name="avg_spent_per_refuel">Avg. Spent per Refuel</string>
     <string name="record_refuel">Record Refuel</string>
+    <string name="trip">Trip</string>
+    <string name="cost_per_km">Cost per km</string>
+    <string name="per_km_value">%1s/km</string>
+    <string name="fuel_remain">Fuel Remain</string>
+    <string name="filled_percent">Filled %</string>
+    <string name="show_less">Show Less</string>
+    <string name="show_more">Show More</string>
 </resources>

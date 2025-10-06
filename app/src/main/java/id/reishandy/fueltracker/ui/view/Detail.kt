@@ -95,7 +95,7 @@ fun Detail(
                 }
 
                 if (true) {
-                    // TODO: Implement recent refuel list
+                    // TODO: Implement recent refuel list and handle onExpand
                     items(5) {
                         FuelItem(
                             fuel = Fuel(
@@ -111,7 +111,8 @@ fun Detail(
                                 fuelEconomy = 50.0,
                                 costPerKm = 200.0,
                                 fuelRemaining = 3.0
-                            )
+                            ),
+                            maxFuelCapacity = 40.0
                         )
                     }
                 } else {

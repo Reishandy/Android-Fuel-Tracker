@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import id.reishandy.fueltracker.data.vehicle.Vehicle
+import java.util.Locale
 
 @Entity(
     tableName = "fuels",
@@ -66,3 +67,9 @@ data class Fuel(
     @ColumnInfo(name = "updated_at")
     val updatedAt: Long = System.currentTimeMillis()
 )
+
+fun Fuel.getFormattedDate(): String {
+    val date = java.util.Date(this.date)
+    val format = java.text.SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.getDefault())
+    return format.format(date)
+}
