@@ -26,25 +26,95 @@ interface VehicleDao {
     @Query("SELECT * FROM vehicles WHERE id = :id")
     suspend fun getById(id: Long): Vehicle?
 
+    /**
+     * Retrieves all vehicles with calculated statistics based on their fuel records.
+     *
+     * The statistics calculated for each vehicle include:
+     * - latest_odometer: The highest odometer reading from all fuel records
+     * - average_fuel_economy: Average of fuel economy across all refuels
+     * - total_fuel_added: Sum of all fuel added to the vehicle
+     * - total_spent: Total money spent on fuel for this vehicle
+     * - refuel_count: Number of times the vehicle has been refueled
+     * - refuel_per_month: Average number of refuels per month since the first recorded refuel
+     *   (calculated using current date minus earliest fuel record date, converted to months)
+     * - avg_liter_refueled: Average amount of fuel added per refueling
+     * - avg_spent_per_refuel: Average amount of money spent per refueling
+     *
+     * COALESCE is used to provide default values (0) when no fuel records exist.
+     *
+     * @return A Flow emitting a list of vehicles with their calculated statistics
+     */
     @Transaction
     @Query(
         """
     SELECT v.*,
-    (SELECT MAX(f.odometer) FROM fuels f WHERE f.vehicle_id = v.id) AS latest_odometer,
-    (SELECT AVG(f.fuel_economy) FROM fuels f WHERE f.vehicle_id = v.id) AS average_fuel_economy
+    COALESCE((SELECT MAX(f.odometer) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS latest_odometer,
+    COALESCE((SELECT AVG(f.fuel_economy) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS average_fuel_economy,
+    COALESCE((SELECT SUM(f.fuel_added) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS total_fuel_added,
+    COALESCE((SELECT SUM(f.total_cost) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS total_spent,
+    COALESCE((SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id), 0) AS refuel_count,
+    COALESCE(
+        CASE 
+            WHEN (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) = 0 THEN 0.0
+            ELSE 
+                (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) * 30.44 / 
+                (CAST((strftime('%s', 'now') - MIN(f2.date) / 1000) AS REAL) / 86400.0)
+        END, 0.0
+    ) AS refuel_per_month,
+    COALESCE((SELECT AVG(f.fuel_added) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS avg_liter_refueled,
+    COALESCE((SELECT AVG(f.total_cost) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS avg_spent_per_refuel
     FROM vehicles v
-"""
+    LEFT JOIN fuels f2 ON f2.vehicle_id = v.id
+    GROUP BY v.id
+    """
     )
     fun getAllWithStats(): Flow<List<VehicleWithStats>>
 
+    /**
+     * Retrieves a specific vehicle by ID with calculated statistics based on its fuel records.
+     *
+     * The statistics calculated for the vehicle include:
+     * - latest_odometer: The highest odometer reading from all fuel records
+     * - average_fuel_economy: Average of fuel economy across all refuels
+     * - total_fuel_added: Sum of all fuel added to the vehicle
+     * - total_spent: Total money spent on fuel for this vehicle
+     * - refuel_count: Number of times the vehicle has been refueled
+     * - refuel_per_month: Average number of refuels per month since the first recorded refuel
+     *   (calculated using current date minus earliest fuel record date, converted to months)
+     *   The constant 30.44 represents the average number of days in a month
+     *   The calculation divides by 86400.0 to convert seconds to days
+     * - avg_liter_refueled: Average amount of fuel added per refueling
+     * - avg_spent_per_refuel: Average amount of money spent per refueling
+     *
+     * COALESCE is used to provide default values (0) when no fuel records exist.
+     *
+     * @param id The ID of the vehicle to retrieve with statistics
+     * @return The vehicle with the specified ID and its calculated statistics, or null if not found
+     */
     @Transaction
     @Query(
         """
     SELECT v.*,
-    (SELECT MAX(f.odometer) FROM fuels f WHERE f.vehicle_id = v.id) AS latest_odometer,
-    (SELECT AVG(f.fuel_economy) FROM fuels f WHERE f.vehicle_id = v.id) AS average_fuel_economy
-    FROM vehicles v WHERE v.id = :id
-"""
+    COALESCE((SELECT MAX(f.odometer) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS latest_odometer,
+    COALESCE((SELECT AVG(f.fuel_economy) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS average_fuel_economy,
+    COALESCE((SELECT SUM(f.fuel_added) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS total_fuel_added,
+    COALESCE((SELECT SUM(f.total_cost) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS total_spent,
+    COALESCE((SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id), 0) AS refuel_count,
+    COALESCE(
+        CASE 
+            WHEN (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) = 0 THEN 0.0
+            ELSE 
+                (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) * 30.44 / 
+                (CAST((strftime('%s', 'now') - MIN(f2.date) / 1000) AS REAL) / 86400.0)
+        END, 0.0
+    ) AS refuel_per_month,
+    COALESCE((SELECT AVG(f.fuel_added) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS avg_liter_refueled,
+    COALESCE((SELECT AVG(f.total_cost) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS avg_spent_per_refuel
+    FROM vehicles v
+    LEFT JOIN fuels f2 ON f2.vehicle_id = v.id
+    WHERE v.id = :id
+    GROUP BY v.id
+    """
     )
     suspend fun getByIdWithStats(id: Long): VehicleWithStats?
 }

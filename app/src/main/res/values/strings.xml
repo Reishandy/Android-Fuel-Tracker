@@ -3,10 +3,12 @@
     <string name="fab_icon">FAB Icon</string>
     <string name="default_avatar">Default Avatar</string>
     <string name="nothing_to_see_here">Nothing to see here…</string>
-    <string name="card_vehicle_manufacturer_model">%1$s %2$s %3$s</string>
-    <string name="card_vehicle_avg">Avg. %1s km/l</string>
-    <string name="card_vehicle_odometer">%1s km</string>
-    <string name="card_vehicle_tank_capacity">Max. %1sL</string>
+    <string name="vehicle_manufacturer_model">%1$s %2$s %3$s</string>
+    <string name="vehicle_avg">Avg. %1s km/l</string>
+    <string name="kml_abbr_value">%1s km/l</string>
+    <string name="km_abbr_value">%1s km</string>
+    <string name="vehicle_tank_capacity">Max. %1s L</string>
+    <string name="liter_abbr_value">%1s L</string>
     <string name="add_new_vehicle">Add New Vehicle</string>
     <string name="vehicle_name">Vehicle Name</string>
     <string name="vehicle_name_placeholder">e.g. Main Vehicle</string>
@@ -16,7 +18,8 @@
     <string name="model_placeholder">e.g. PCX 160</string>
     <string name="year">Vehicle Year</string>
     <string name="year_placeholder">e.g. 2025</string>
-    <string name="max_fuel">Max Fuel Capacity</string>
+    <string name="max_fuel_capacity">Max Fuel Capacity</string>
+    <string name="max_fuel">Max Fuel</string>
     <string name="max_fuel_placeholder">e.g. 8.0</string>
     <string name="liter_abbr">L</string>
     <string name="cancel">Cancel</string>
@@ -28,4 +31,15 @@
     <string name="delete_text">Are you sure want to delete \"%1$s\" entry? This action cannot be undone.</string>
     <string name="edit">Edit</string>
     <string name="your_vehicles">Your Vehicles</string>
+    <string name="vehicle_stats">Vehicle Stats</string>
+    <string name="refuel_history">Refueling History</string>
+    <string name="odometer">Odometer</string>
+    <string name="fuel_economy">Fuel Economy</string>
+    <string name="est_range">Est. Range</string>
+    <string name="refuel_per_month">Refuel / Month</string>
+    <string name="refuel_per_month_value">%1s / mo.</string>
+    <string name="total_refuel">Total Refuel</string>
+    <string name="total_spent">Total Spent</string>
+    <string name="avg_refueled">Avg. Refueled</string>
+        <string name="avg_spent_per_refuel">Avg. Spent per Refuel</string>
 </resources>

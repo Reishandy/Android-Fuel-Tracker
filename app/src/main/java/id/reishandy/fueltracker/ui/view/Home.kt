@@ -125,7 +125,13 @@ internal fun PreviewHome() {
                             maxFuelCapacity = 45.0
                         ),
                         latestOdometer = 150000.0,
-                        averageFuelEconomy = 14.5
+                        averageFuelEconomy = 14.5,
+                        totalFuelAdded = 400.0,
+                        totalSpent = 12000000.0,
+                        refuelCount = 40,
+                        refuelPerMonth = 3.0,
+                        avgLiterRefueled = 7.0,
+                        avgSpentPerRefuel = 85000.0
                     ),
                     VehicleWithStats(
                         vehicle = Vehicle(
@@ -137,7 +143,13 @@ internal fun PreviewHome() {
                             maxFuelCapacity = 5.5
                         ),
                         latestOdometer = 25000.0,
-                        averageFuelEconomy = 45.0
+                        averageFuelEconomy = 45.0,
+                        totalFuelAdded = 150.0,
+                        totalSpent = 3000000.0,
+                        refuelCount = 25,
+                        refuelPerMonth = 2.5,
+                        avgLiterRefueled = 6.0,
+                        avgSpentPerRefuel = 120000.0
                     ),
                     VehicleWithStats(
                         vehicle = Vehicle(
@@ -149,7 +161,13 @@ internal fun PreviewHome() {
                             maxFuelCapacity = 7.1
                         ),
                         latestOdometer = 12000.0,
-                        averageFuelEconomy = 42.0
+                        averageFuelEconomy = 42.0,
+                        totalFuelAdded = 60.0,
+                        totalSpent = 1800000.0,
+                        refuelCount = 10,
+                        refuelPerMonth = 1.5,
+                        avgLiterRefueled = 6.0,
+                        avgSpentPerRefuel = 180000.0
                     ),
                     VehicleWithStats(
                         vehicle = Vehicle(
@@ -161,7 +179,13 @@ internal fun PreviewHome() {
                             maxFuelCapacity = 42.0
                         ),
                         latestOdometer = 220000.0,
-                        averageFuelEconomy = 10.5
+                        averageFuelEconomy = 10.5,
+                        totalFuelAdded = 600.0,
+                        totalSpent = 9000000.0,
+                        refuelCount = 60,
+                        refuelPerMonth = 5.0,
+                        avgLiterRefueled = 10.0,
+                        avgSpentPerRefuel = 150000.0
                     )
                 )
             )

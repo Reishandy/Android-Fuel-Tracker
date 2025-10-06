@@ -33,7 +33,8 @@ import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
-import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun VehicleItem(
@@ -49,12 +50,17 @@ fun VehicleItem(
         ),
         latestOdometer = 0.0,
         averageFuelEconomy = 0.0,
+        totalFuelAdded = 0.0,
+        totalSpent = 0.0,
+        refuelCount = 0,
+        refuelPerMonth = 0.0,
+        avgLiterRefueled = 0.0,
+        avgSpentPerRefuel = 0.0
     ),
     onClick: () -> Unit = { },
     onEditClick: (Vehicle) -> Unit = { _ -> },
     onDeleteClick: (Vehicle) -> Unit = { _ -> }
 ) {
-    val formatter = DecimalFormat("#,###")
     var showMenu by remember { mutableStateOf(false) }
     Card(
         modifier = modifier
@@ -84,7 +90,7 @@ fun VehicleItem(
             ) {
                 Text(
                     text = stringResource(
-                        R.string.card_vehicle_manufacturer_model,
+                        R.string.vehicle_manufacturer_model,
                         vehicleWithStats.vehicle.manufacturer,
                         vehicleWithStats.vehicle.model,
                         vehicleWithStats.vehicle.year.toString()
@@ -110,7 +116,7 @@ fun VehicleItem(
             ) {
                 Text(
                     text = stringResource(
-                        R.string.card_vehicle_avg,
+                        R.string.vehicle_avg,
                         vehicleWithStats.averageFuelEconomy
                     ),
                     style = MaterialTheme.typography.labelMedium,
@@ -119,15 +125,16 @@ fun VehicleItem(
 
                 Text(
                     text = stringResource(
-                        R.string.card_vehicle_odometer,
-                        formatter.format(vehicleWithStats.latestOdometer)
+                        R.string.km_abbr_value,
+                        NumberFormat.getNumberInstance(Locale.getDefault())
+                            .format(vehicleWithStats.latestOdometer)
                     ),
                     style = MaterialTheme.typography.titleLarge
                 )
 
                 Text(
                     text = stringResource(
-                        R.string.card_vehicle_tank_capacity,
+                        R.string.vehicle_tank_capacity,
                         vehicleWithStats.vehicle.maxFuelCapacity.toString()
                     ),
                     style = MaterialTheme.typography.labelMedium,
@@ -197,7 +204,11 @@ internal fun PreviewVehicleItem() {
                     maxFuelCapacity = 8.1
                 ),
                 latestOdometer = 980000.0,
-                averageFuelEconomy = 39.99
+                averageFuelEconomy = 39.99,
+                totalFuelAdded = 420.0,
+                totalSpent = 4200000.0,
+                refuelCount = 69,
+                refuelPerMonth = 4.2
             ),
         )
     }
