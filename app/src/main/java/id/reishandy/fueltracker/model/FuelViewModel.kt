@@ -1,0 +1,43 @@
+package id.reishandy.fueltracker.model
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import id.reishandy.fueltracker.data.fuel.Fuel
+import id.reishandy.fueltracker.data.fuel.FuelRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+data class FuelState(
+    val fuels: List<Fuel> = emptyList(),
+    val selectedFuel: Fuel? = null,
+)
+
+@HiltViewModel
+class FuelViewModel @Inject constructor(
+    private val fuelRepository: FuelRepository
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(FuelState())
+    val uiState: StateFlow<FuelState> = _uiState.asStateFlow()
+
+    fun populateFuels(vehicleId: Long) {
+        viewModelScope.launch {
+            try {
+                fuelRepository.getByVehicleId(vehicleId).collect { fuels ->
+                    _uiState.update { it.copy(fuels = fuels) }
+                }
+            } catch (e: Exception) {
+                Log.e("FuelViewModel", "Error fetching fuels", e)
+            }
+        }
+    }
+
+    fun updateSelectedFuel(fuel: Fuel?) {
+        _uiState.update { it.copy(selectedFuel = fuel) }
+    }
+}

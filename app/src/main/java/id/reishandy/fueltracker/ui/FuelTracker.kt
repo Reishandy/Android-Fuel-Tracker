@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import id.reishandy.fueltracker.model.DeleteViewModel
+import id.reishandy.fueltracker.model.FuelViewModel
 import id.reishandy.fueltracker.model.VehicleFormViewModel
 import id.reishandy.fueltracker.model.VehicleViewModel
 import id.reishandy.fueltracker.model.showToast
@@ -41,10 +42,12 @@ fun FuelTracker() {
 
     val vehicleViewModel: VehicleViewModel = hiltViewModel()
     val vehicleFormViewModel: VehicleFormViewModel = hiltViewModel()
+    val fuelViewModel: FuelViewModel = hiltViewModel()
     val deleteViewModel: DeleteViewModel = hiltViewModel()
 
     val vehicleUiState by vehicleViewModel.uiState.collectAsState()
     val vehicleFormUiState by vehicleFormViewModel.uiState.collectAsState()
+    val fuelUiState by fuelViewModel.uiState.collectAsState()
     val deleteUiState by deleteViewModel.uiState.collectAsState()
 
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState(
@@ -76,6 +79,7 @@ fun FuelTracker() {
                     },
                     onVehicleClick = { vehicleWithStats ->
                         vehicleViewModel.updateSelectedVehicleWithStats(vehicleWithStats)
+                        fuelViewModel.populateFuels(vehicleWithStats.vehicle.id)
                         navController.navigate(FuelTrackerNav.VEHICLE_DETAIL.name)
                     }
                 )
@@ -100,7 +104,17 @@ fun FuelTracker() {
                         deleteViewModel.updateSelectedVehicle(vehicleUiState.selectedVehicleWithStats!!.vehicle)
                         deleteViewModel.showSheet()
                     },
-                    vehicleWithStats = vehicleUiState.selectedVehicleWithStats!!
+                    vehicleWithStats = vehicleUiState.selectedVehicleWithStats!!,
+                    fuels = fuelUiState.fuels,
+                    onAddFuelClick = {
+                        /* TODO: Implement add fuel  */
+                    },
+                    onFuelEditClick = { fuel ->
+                        /* TODO: Implement edit fuel  */
+                    },
+                    onFuelDeleteClick = { fuel ->
+                        /* TODO: Implement delete fuel  */
+                    }
                 )
             }
         }

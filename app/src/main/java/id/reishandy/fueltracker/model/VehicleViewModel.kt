@@ -1,5 +1,6 @@
 package id.reishandy.fueltracker.model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,14 +27,13 @@ class VehicleViewModel @Inject constructor(
     val uiState: StateFlow<VehicleState> = _uiState.asStateFlow()
 
     init {
-        try {
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         viewModelScope.launch {
-            vehicleRepository.getAllWithStats().collect { list ->
-                _uiState.update { it.copy(vehiclesWithStats = list) }
+            try {
+                vehicleRepository.getAllWithStats().collect { list ->
+                    _uiState.update { it.copy(vehiclesWithStats = list) }
+                }
+            } catch (e: Exception) {
+                Log.e("VehicleViewModel", "Error fetching vehicles", e)
             }
         }
     }

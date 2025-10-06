@@ -24,4 +24,7 @@ interface FuelDao {
 
     @Query("SELECT * FROM fuels WHERE id = :id")
     suspend fun getById(id: Long): Fuel?
+
+    @Query("SELECT * FROM fuels WHERE vehicle_id = :vehicleId ORDER BY date DESC")
+    fun getByVehicleId(vehicleId: Long): Flow<List<Fuel>>
 }

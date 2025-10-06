@@ -23,6 +23,8 @@ class FuelRepository @Inject constructor(
 
     suspend fun getById(id: Long) = fuelDao.getById(id)
 
+    fun getByVehicleId(vehicleId: Long) = fuelDao.getByVehicleId(vehicleId)
+
     private suspend fun calculateDynamicFields(fuel: Fuel): Fuel {
         val vehicle = vehicleDao.getById(fuel.vehicleId)
             ?: throw IllegalArgumentException("Vehicle with id ${fuel.vehicleId} not found")

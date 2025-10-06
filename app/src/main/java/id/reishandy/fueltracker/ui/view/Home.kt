@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -26,8 +27,8 @@ import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
 import id.reishandy.fueltracker.ui.component.HomeHeader
-import id.reishandy.fueltracker.ui.component.VehicleItem
 import id.reishandy.fueltracker.ui.component.SectionDivider
+import id.reishandy.fueltracker.ui.component.VehicleItem
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 
 @Composable
@@ -58,8 +59,7 @@ fun Home(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
             ) {
                 if (vehiclesWithStats.isNotEmpty()) {
-                    items(vehiclesWithStats.size) { index ->
-                        val vehicleWithStats = vehiclesWithStats[index]
+                    items(vehiclesWithStats) { vehicleWithStats ->
                         VehicleItem(
                             vehicleWithStats = vehicleWithStats,
                             onClick = { onVehicleClick(vehicleWithStats) },

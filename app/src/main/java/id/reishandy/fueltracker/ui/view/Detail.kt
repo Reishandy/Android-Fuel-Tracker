@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -16,6 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -57,8 +60,13 @@ fun Detail(
         avgLiterRefueled = 0.0,
         avgSpentPerRefuel = 0.0
     ),
-    onAddFuelClick: () -> Unit = { }
+    fuels: List<Fuel> = emptyList(),
+    onAddFuelClick: () -> Unit = { },
+    onFuelEditClick: (Fuel) -> Unit = { _ -> },
+    onFuelDeleteClick: (Fuel) -> Unit = { _ -> }
 ) {
+    val expandedFuelIds = remember { mutableStateOf(setOf<Long>()) }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -94,25 +102,21 @@ fun Detail(
                     }
                 }
 
-                if (true) {
-                    // TODO: Implement recent refuel list and handle onExpand
-                    items(5) {
+                if (fuels.isNotEmpty()) {
+                    items(fuels) { fuel ->
                         FuelItem(
-                            fuel = Fuel(
-                                id = 1,
-                                vehicleId = 1,
-                                date = 0,
-                                odometer = 15000.0,
-                                trip = 250.0,
-                                fuelAdded = 5.0,
-                                fuelType = "Pertalite",
-                                pricePerLiter = 10_000.0,
-                                totalCost = 50_000.0,
-                                fuelEconomy = 50.0,
-                                costPerKm = 200.0,
-                                fuelRemaining = 3.0
-                            ),
-                            maxFuelCapacity = 40.0
+                            fuel = fuel,
+                            maxFuelCapacity = vehicleWithStats.vehicle.maxFuelCapacity,
+                            onEditClick = { onFuelEditClick(fuel) },
+                            onDeleteClick = { onFuelDeleteClick(fuel) },
+                            expanded = expandedFuelIds.value.contains(fuel.id),
+                            onExpandedChange = { isExpanded ->
+                                expandedFuelIds.value = if (isExpanded) {
+                                    expandedFuelIds.value + fuel.id
+                                } else {
+                                    expandedFuelIds.value - fuel.id
+                                }
+                            }
                         )
                     }
                 } else {
