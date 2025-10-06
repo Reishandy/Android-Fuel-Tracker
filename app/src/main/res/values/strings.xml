@@ -42,4 +42,5 @@
     <string name="total_spent">Total Spent</string>
     <string name="avg_refueled">Avg. Refueled</string>
         <string name="avg_spent_per_refuel">Avg. Spent per Refuel</string>
+    <string name="record_refuel">Record Refuel</string>
 </resources>
