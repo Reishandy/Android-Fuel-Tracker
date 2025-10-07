@@ -45,7 +45,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
-import id.reishandy.fueltracker.helper.convertMillisToDate
+import id.reishandy.fueltracker.util.convertMillisToDate
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 import java.text.NumberFormat
 import java.util.Locale

@@ -1,6 +1,7 @@
 package id.reishandy.fueltracker.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
@@ -39,4 +40,10 @@ object AppModule {
     @Singleton
     fun provideFuelRepository(vehicleDao: VehicleDao, fuelDao: FuelDao): FuelRepository =
         FuelRepository(vehicleDao, fuelDao)
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences("fuel_tracker_prefs", Context.MODE_PRIVATE)
+    }
 }

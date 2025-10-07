@@ -1,5 +1,6 @@
 package id.reishandy.fueltracker.ui
 
+import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -17,11 +18,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import id.reishandy.fueltracker.helper.showToast
 import id.reishandy.fueltracker.model.DeleteType
 import id.reishandy.fueltracker.model.DeleteViewModel
 import id.reishandy.fueltracker.model.FuelFormViewModel
 import id.reishandy.fueltracker.model.FuelViewModel
+import id.reishandy.fueltracker.model.SettingViewModel
 import id.reishandy.fueltracker.model.VehicleFormViewModel
 import id.reishandy.fueltracker.model.VehicleViewModel
 import id.reishandy.fueltracker.ui.component.DeleteBottomSheet
@@ -29,12 +30,15 @@ import id.reishandy.fueltracker.ui.component.FuelFormBottomSheet
 import id.reishandy.fueltracker.ui.component.VehicleFormBottomSheet
 import id.reishandy.fueltracker.ui.view.Detail
 import id.reishandy.fueltracker.ui.view.Home
+import id.reishandy.fueltracker.ui.view.Setting
+import id.reishandy.fueltracker.util.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 enum class FuelTrackerNav {
     HOME,
     VEHICLE_DETAIL,
+    SETTING
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,12 +53,14 @@ fun FuelTracker() {
     val fuelViewModel: FuelViewModel = hiltViewModel()
     val fuelFormViewModel: FuelFormViewModel = hiltViewModel()
     val deleteViewModel: DeleteViewModel = hiltViewModel()
+    val settingViewModel: SettingViewModel = hiltViewModel()
 
     val vehicleUiState by vehicleViewModel.uiState.collectAsState()
     val vehicleFormUiState by vehicleFormViewModel.uiState.collectAsState()
     val fuelUiState by fuelViewModel.uiState.collectAsState()
     val fuelFormUiState by fuelFormViewModel.uiState.collectAsState()
     val deleteUiState by deleteViewModel.uiState.collectAsState()
+    val settingUiState by settingViewModel.uiState.collectAsState()
 
     val vehicleSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -91,6 +97,9 @@ fun FuelTracker() {
                         vehicleViewModel.updateSelectedVehicleWithStats(vehicleWithStats)
                         fuelViewModel.populateFuels(vehicleWithStats.vehicle.id)
                         navController.navigate(FuelTrackerNav.VEHICLE_DETAIL.name)
+                    },
+                    onProfileClick = {
+                        navController.navigate(FuelTrackerNav.SETTING.name)
                     }
                 )
             }
@@ -127,6 +136,21 @@ fun FuelTracker() {
                         deleteViewModel.updateSelectedFuel(fuel)
                         deleteViewModel.setDeleteType(DeleteType.FUEL)
                         deleteViewModel.showSheet()
+                    }
+                )
+            }
+
+            composable(route = FuelTrackerNav.SETTING.name) {
+                Setting(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onLoginClick = { /* TODO: Implement login */ },
+                    onLogoutClick = { /* TODO: Implement logout */ },
+                    locales = settingUiState.locales,
+                    selectedLocale = settingUiState.selectedLocale,
+                    onLocaleSelected = { locale ->
+                        settingViewModel.updateSelectedLocale(locale, context as? Activity)
                     }
                 )
             }
@@ -326,6 +350,5 @@ fun FuelTracker() {
 //  - Google login
 //  - Backup and restore (google drive?)
 //  - Sync every CRUD or db update
-//  - Locale setting
 //  - Animations
 //  - Custom splash screen

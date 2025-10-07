@@ -14,8 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
-import id.reishandy.fueltracker.helper.formatCurrency
-import id.reishandy.fueltracker.helper.formatNumber
+import id.reishandy.fueltracker.util.formatCurrency
+import id.reishandy.fueltracker.util.formatNumber
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 
 @Composable

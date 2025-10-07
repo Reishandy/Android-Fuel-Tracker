@@ -34,9 +34,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.fuel.Fuel
-import id.reishandy.fueltracker.helper.convertMillisToDate
-import id.reishandy.fueltracker.helper.formatCurrency
-import id.reishandy.fueltracker.helper.formatNumber
+import id.reishandy.fueltracker.util.convertMillisToDate
+import id.reishandy.fueltracker.util.formatCurrency
+import id.reishandy.fueltracker.util.formatNumber
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 
 @Composable

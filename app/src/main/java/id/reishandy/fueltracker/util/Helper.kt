@@ -1,4 +1,4 @@
-package id.reishandy.fueltracker.helper
+package id.reishandy.fueltracker.util
 
 import android.content.Context
 import android.widget.Toast

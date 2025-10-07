@@ -1,4 +1,4 @@
-package id.reishandy.fueltracker.helper
+package id.reishandy.fueltracker.util
 
 import androidx.compose.material3.SelectableDates
 import java.time.LocalDate

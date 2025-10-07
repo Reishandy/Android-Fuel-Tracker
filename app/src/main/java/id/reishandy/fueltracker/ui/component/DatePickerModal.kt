@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
-import id.reishandy.fueltracker.helper.PastOrPresentSelectableDates
+import id.reishandy.fueltracker.util.PastOrPresentSelectableDates
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 
 @Composable

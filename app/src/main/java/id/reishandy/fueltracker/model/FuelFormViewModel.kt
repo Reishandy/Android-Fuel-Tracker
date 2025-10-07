@@ -10,7 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import id.reishandy.fueltracker.data.fuel.Fuel
 import id.reishandy.fueltracker.data.fuel.FuelRepository
 import id.reishandy.fueltracker.data.vehicle.Vehicle
-import id.reishandy.fueltracker.helper.showToast
+import id.reishandy.fueltracker.util.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

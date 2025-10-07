@@ -1,5 +1,6 @@
 package id.reishandy.fueltracker.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +27,8 @@ import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 
 @Composable
 fun HomeHeader(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick : () -> Unit = { }
 ) {
     Card(
         modifier = modifier
@@ -48,18 +50,19 @@ fun HomeHeader(
         ) {
             Column {
                 Text(
-                    text = "Reishandy's",
+                    text = stringResource(R.string.reishandy_s),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Text(
-                    text = "Fuel Tracker",
+                    text = stringResource(R.string.fuel_tracker),
                     style = MaterialTheme.typography.titleLarge
                 )
             }
 
             Column(
+                modifier = Modifier.clickable { onProfileClick() },
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {

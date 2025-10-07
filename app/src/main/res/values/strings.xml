@@ -64,4 +64,12 @@
     <string name="fuel_type_placeholder">e.g. Pertamax</string>
     <string name="price_per_liter">Price per Liter</string>
     <string name="price_per_liter_placeholder">e.g. 12,200</string>
+    <string name="back">Back</string>
+    <string name="reishandy_s">Reishandy\'s</string>
+    <string name="fuel_tracker">Fuel Tracker</string>
+    <string name="settings">Settings</string>
+    <string name="login">Log In</string>
+    <string name="logout">Log Out</string>
+    <string name="locale">Locale</string>
+    <string name="locale_description">This changes the app\'s locale and will affect currency, date, and number formatting.</string>
 </resources>
