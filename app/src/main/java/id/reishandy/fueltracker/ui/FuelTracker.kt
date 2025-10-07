@@ -154,15 +154,9 @@ fun FuelTracker() {
                         context = context,
                         vehicle = vehicleUiState.selectedVehicleWithStats!!.vehicle,
                         fuel = fuelFormUiState.selectedFuel!!,
-                        previousOdometer = fuelUiState.fuels.maxByOrNull { it.id }?.let {
-                            if (it.id == fuelFormUiState.selectedFuel!!.id) {
-                                fuelUiState.fuels
-                                    .filter { fuel -> fuel.id != fuelFormUiState.selectedFuel!!.id }
-                                    .maxByOrNull { fuel -> fuel.id }?.odometer
-                            } else {
-                                it.odometer
-                            }
-                        },
+                        previousOdometer = fuelUiState.fuels
+                            .filter { fuel -> fuel.id < fuelFormUiState.selectedFuel!!.id }
+                            .maxByOrNull { it.id }?.odometer,
                         onSuccess = {
                             scope.launch {
                                 fuelViewModel.populateFuels(vehicleUiState.selectedVehicleWithStats!!.vehicle.id)
