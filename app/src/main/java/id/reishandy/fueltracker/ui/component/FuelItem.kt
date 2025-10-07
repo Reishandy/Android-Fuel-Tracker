@@ -34,10 +34,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.fuel.Fuel
-import id.reishandy.fueltracker.model.convertMillisToDate
+import id.reishandy.fueltracker.helper.convertMillisToDate
+import id.reishandy.fueltracker.helper.formatCurrency
+import id.reishandy.fueltracker.helper.formatNumber
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
-import java.text.NumberFormat
-import java.util.Locale
 
 @Composable
 fun FuelItem(
@@ -108,16 +108,14 @@ fun FuelItem(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = NumberFormat.getCurrencyInstance(Locale.getDefault())
-                            .format(fuel.totalCost),
+                        text = formatCurrency(fuel.totalCost),
                         style = MaterialTheme.typography.titleLarge
                     )
 
                     Text(
                         text = stringResource(
                             R.string.per_liter_abbr_value,
-                            NumberFormat.getCurrencyInstance(Locale.getDefault())
-                                .format(fuel.pricePerLiter)
+                            formatCurrency(fuel.pricePerLiter)
                         ),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -132,7 +130,7 @@ fun FuelItem(
                     Text(
                         text = stringResource(
                             R.string.liter_abbr_value,
-                            fuel.fuelAdded
+                            formatNumber(fuel.fuelAdded, 1)
                         ),
                         style = MaterialTheme.typography.titleLarge
                     )
@@ -186,8 +184,7 @@ fun FuelItem(
                             label = R.string.odometer,
                             value = stringResource(
                                 R.string.km_abbr_value,
-                                NumberFormat.getNumberInstance(Locale.getDefault())
-                                    .format(fuel.odometer),
+                                formatNumber(fuel.odometer)
                             )
                         )
 
@@ -196,8 +193,7 @@ fun FuelItem(
                             label = R.string.trip,
                             value = stringResource(
                                 R.string.km_abbr_value,
-                                NumberFormat.getNumberInstance(Locale.getDefault())
-                                    .format(fuel.trip),
+                                formatNumber(fuel.trip)
                             )
                         )
 
@@ -206,8 +202,7 @@ fun FuelItem(
                             label = R.string.fuel_remain,
                             value = stringResource(
                                 R.string.liter_abbr_value,
-                                NumberFormat.getNumberInstance(Locale.getDefault())
-                                    .format(fuel.fuelRemaining)
+                                formatNumber(fuel.fuelRemaining, 1)
                             )
                         )
                     }
@@ -220,8 +215,7 @@ fun FuelItem(
                             label = R.string.fuel_economy,
                             value = stringResource(
                                 R.string.kml_abbr_value,
-                                NumberFormat.getNumberInstance(Locale.getDefault())
-                                    .format(fuel.fuelEconomy),
+                                formatNumber(fuel.fuelEconomy, 2)
                             )
                         )
 
@@ -230,17 +224,14 @@ fun FuelItem(
                             label = R.string.cost_per_km,
                             value = stringResource(
                                 R.string.per_km_value,
-                                NumberFormat.getCurrencyInstance(Locale.getDefault())
-                                    .format(fuel.costPerKm)
+                                formatCurrency(fuel.costPerKm)
                             )
                         )
 
                         FuelItemDetail(
                             modifier = Modifier.weight(1 / 3f),
                             label = R.string.filled_percent,
-                            value = if (maxFuelCapacity > 0.0) NumberFormat.getNumberInstance(Locale.getDefault())
-                                .apply { maximumFractionDigits = 1 }
-                                .format(fuel.fuelRemaining / maxFuelCapacity * 100.0) + "%" else "N/A"
+                            value = if (maxFuelCapacity > 0.0) formatNumber(fuel.fuelRemaining / maxFuelCapacity * 100.0) + "%" else "N/A"
                         )
                     }
 

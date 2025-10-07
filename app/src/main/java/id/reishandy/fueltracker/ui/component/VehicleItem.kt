@@ -32,9 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
+import id.reishandy.fueltracker.helper.formatNumber
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
-import java.text.NumberFormat
-import java.util.Locale
 
 @Composable
 fun VehicleItem(
@@ -62,6 +61,7 @@ fun VehicleItem(
     onDeleteClick: (Vehicle) -> Unit = { _ -> }
 ) {
     var showMenu by remember { mutableStateOf(false) }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -117,7 +117,7 @@ fun VehicleItem(
                 Text(
                     text = stringResource(
                         R.string.vehicle_avg,
-                        vehicleWithStats.averageFuelEconomy
+                        formatNumber(vehicleWithStats.averageFuelEconomy, 2)
                     ),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -126,8 +126,7 @@ fun VehicleItem(
                 Text(
                     text = stringResource(
                         R.string.km_abbr_value,
-                        NumberFormat.getNumberInstance(Locale.getDefault())
-                            .format(vehicleWithStats.latestOdometer)
+                        formatNumber(vehicleWithStats.latestOdometer)
                     ),
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -135,7 +134,7 @@ fun VehicleItem(
                 Text(
                     text = stringResource(
                         R.string.vehicle_tank_capacity,
-                        vehicleWithStats.vehicle.maxFuelCapacity.toString()
+                        formatNumber(vehicleWithStats.vehicle.maxFuelCapacity, 1)
                     ),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

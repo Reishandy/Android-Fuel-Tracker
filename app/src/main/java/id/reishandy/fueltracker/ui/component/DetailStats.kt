@@ -14,9 +14,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
+import id.reishandy.fueltracker.helper.formatCurrency
+import id.reishandy.fueltracker.helper.formatNumber
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
-import java.text.NumberFormat
-import java.util.Locale
 
 @Composable
 fun DetailStats(
@@ -48,13 +48,13 @@ fun DetailStats(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
         ) {
+            // TODO: Decimal trailing coma
             DetailCard(
                 modifier = Modifier.weight(2 / 3f),
                 title = R.string.odometer,
                 value = stringResource(
                     R.string.km_abbr_value,
-                    NumberFormat.getNumberInstance(Locale.getDefault())
-                        .format(vehicleWithStats.latestOdometer)
+                    formatNumber(vehicleWithStats.latestOdometer)
                 )
             )
 
@@ -63,7 +63,7 @@ fun DetailStats(
                 title = R.string.max_fuel,
                 value = stringResource(
                     R.string.liter_abbr_value,
-                    vehicleWithStats.vehicle.maxFuelCapacity
+                    formatNumber(vehicleWithStats.vehicle.maxFuelCapacity, 1)
                 )
             )
         }
@@ -77,7 +77,7 @@ fun DetailStats(
                 title = R.string.fuel_economy,
                 value = stringResource(
                     R.string.kml_abbr_value,
-                    vehicleWithStats.averageFuelEconomy
+                    formatNumber(vehicleWithStats.averageFuelEconomy, 2)
                 )
             )
 
@@ -86,8 +86,7 @@ fun DetailStats(
                 title = R.string.est_range,
                 value = stringResource(
                     R.string.km_abbr_value,
-                    NumberFormat.getNumberInstance(Locale.getDefault())
-                        .format(vehicleWithStats.averageFuelEconomy * vehicleWithStats.vehicle.maxFuelCapacity)
+                        formatNumber(vehicleWithStats.averageFuelEconomy * vehicleWithStats.vehicle.maxFuelCapacity)
                 )
             )
 
@@ -96,8 +95,7 @@ fun DetailStats(
                 title = R.string.refuel_per_month,
                 value = stringResource(
                     R.string.refuel_per_month_value,
-                    NumberFormat.getNumberInstance(Locale.getDefault())
-                        .format(vehicleWithStats.refuelPerMonth)
+                        formatNumber(vehicleWithStats.refuelPerMonth, 1)
                 )
             )
         }
@@ -111,15 +109,14 @@ fun DetailStats(
                 title = R.string.avg_refueled,
                 value = stringResource(
                     R.string.liter_abbr_value,
-                    vehicleWithStats.avgLiterRefueled
+                    formatNumber(vehicleWithStats.avgLiterRefueled, 1)
                 )
             )
 
             DetailCard(
                 modifier = Modifier.weight(2 / 3f),
                 title = R.string.avg_spent_per_refuel,
-                value = NumberFormat.getCurrencyInstance(Locale.getDefault())
-                    .format(vehicleWithStats.avgSpentPerRefuel)
+                value = formatCurrency(vehicleWithStats.avgSpentPerRefuel)
             )
         }
 
@@ -132,15 +129,14 @@ fun DetailStats(
                 title = R.string.total_refuel,
                 value = stringResource(
                     R.string.liter_abbr_value,
-                    vehicleWithStats.totalFuelAdded
+                    formatNumber(vehicleWithStats.totalFuelAdded, 1)
                 )
             )
 
             DetailCard(
                 modifier = Modifier.weight(2 / 3f),
                 title = R.string.total_spent,
-                value = NumberFormat.getCurrencyInstance(Locale.getDefault())
-                    .format(vehicleWithStats.totalSpent)
+                value = formatCurrency(vehicleWithStats.totalSpent)
             )
         }
     }
