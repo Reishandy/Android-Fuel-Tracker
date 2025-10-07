@@ -14,8 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class FuelState(
-    val fuels: List<Fuel> = emptyList(),
-    val selectedFuel: Fuel? = null,
+    val fuels: List<Fuel> = emptyList()
 )
 
 @HiltViewModel
@@ -35,10 +34,6 @@ class FuelViewModel @Inject constructor(
                 Log.e("FuelViewModel", "Error fetching fuels", e)
             }
         }
-    }
-
-    fun updateSelectedFuel(fuel: Fuel?) {
-        _uiState.update { it.copy(selectedFuel = fuel) }
     }
 
     fun removeFromList(fuel: Fuel) {

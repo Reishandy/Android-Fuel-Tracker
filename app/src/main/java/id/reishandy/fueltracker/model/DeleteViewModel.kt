@@ -11,6 +11,8 @@ import id.reishandy.fueltracker.data.fuel.Fuel
 import id.reishandy.fueltracker.data.fuel.FuelRepository
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleRepository
+import id.reishandy.fueltracker.helper.convertMillisToDate
+import id.reishandy.fueltracker.helper.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +30,8 @@ data class DeleteState(
     val isProcessing: Boolean = false,
     val name: String = "",
     val selectedVehicle: Vehicle? = null,
-    val selectedFuel: Fuel? = null
+    val selectedFuel: Fuel? = null,
+    val deleteType: DeleteType = DeleteType.VEHICLE,
 )
 
 @HiltViewModel
@@ -42,15 +45,12 @@ class DeleteViewModel @Inject constructor(
     var isOnDetails by mutableStateOf(false)
         private set
 
-    var deleteType by mutableStateOf(DeleteType.VEHICLE)
-        private set
-
     fun setIsOnDetails(value: Boolean) {
         isOnDetails = value
     }
 
     fun setDeleteType(value: DeleteType) {
-        deleteType = value
+        _uiState.update { it.copy(deleteType = value) }
     }
 
     fun showSheet() {

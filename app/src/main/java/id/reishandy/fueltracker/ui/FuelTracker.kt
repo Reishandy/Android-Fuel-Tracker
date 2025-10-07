@@ -17,13 +17,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import id.reishandy.fueltracker.helper.showToast
 import id.reishandy.fueltracker.model.DeleteType
 import id.reishandy.fueltracker.model.DeleteViewModel
 import id.reishandy.fueltracker.model.FuelFormViewModel
 import id.reishandy.fueltracker.model.FuelViewModel
 import id.reishandy.fueltracker.model.VehicleFormViewModel
 import id.reishandy.fueltracker.model.VehicleViewModel
-import id.reishandy.fueltracker.model.showToast
 import id.reishandy.fueltracker.ui.component.DeleteBottomSheet
 import id.reishandy.fueltracker.ui.component.FuelFormBottomSheet
 import id.reishandy.fueltracker.ui.component.VehicleFormBottomSheet
@@ -120,7 +120,8 @@ fun FuelTracker() {
                         fuelFormViewModel.showSheet()
                     },
                     onFuelEditClick = { fuel ->
-                        /* TODO: Implement edit fuel  */
+                        fuelFormViewModel.setupEdit(fuel)
+                        fuelFormViewModel.showSheet()
                     },
                     onFuelDeleteClick = { fuel ->
                         deleteViewModel.updateSelectedFuel(fuel)
@@ -134,16 +135,61 @@ fun FuelTracker() {
         FuelFormBottomSheet(
             onDismissRequest = {
                 fuelFormViewModel.hideSheet()
-                // TODO: Clear edit if editing fuel
+                if (fuelFormUiState.isEdit) {
+                    fuelFormViewModel.clearEdit()
+                }
             },
             onCloseButtonClick = {
                 scope.launch {
                     fuelSheetState.hide()
                     fuelFormViewModel.hideSheet()
-                    // TODO: Clear edit if editing fuel
+                    if (fuelFormUiState.isEdit) {
+                        fuelFormViewModel.clearEdit()
+                    }
                 }
             },
-            onSaveButtonClick = { /* TODO: Implement save fuel  */ },
+            onSaveButtonClick = {
+                if (fuelFormUiState.isEdit) {
+                    fuelFormViewModel.updateFuel(
+                        context = context,
+                        vehicle = vehicleUiState.selectedVehicleWithStats!!.vehicle,
+                        fuel = fuelFormUiState.selectedFuel!!,
+                        previousOdometer = fuelUiState.fuels.maxByOrNull { it.id }?.let {
+                            if (it.id == fuelFormUiState.selectedFuel!!.id) {
+                                fuelUiState.fuels
+                                    .filter { fuel -> fuel.id != fuelFormUiState.selectedFuel!!.id }
+                                    .maxByOrNull { fuel -> fuel.id }?.odometer
+                            } else {
+                                it.odometer
+                            }
+                        },
+                        onSuccess = {
+                            scope.launch {
+                                fuelViewModel.populateFuels(vehicleUiState.selectedVehicleWithStats!!.vehicle.id)
+                                vehicleViewModel.updateSelectedVehicleAfterEdit()
+                                fuelSheetState.hide()
+                                fuelFormViewModel.clearEdit()
+                                fuelFormViewModel.hideSheet()
+                            }
+                        }
+                    )
+                } else {
+                    fuelFormViewModel.addFuel(
+                        context = context,
+                        vehicle = vehicleUiState.selectedVehicleWithStats!!.vehicle,
+                        previousOdometer = fuelUiState.fuels.maxByOrNull { it.odometer }?.odometer,
+                        onSuccess = {
+                            scope.launch {
+                                fuelViewModel.populateFuels(vehicleUiState.selectedVehicleWithStats!!.vehicle.id)
+                                vehicleViewModel.updateSelectedVehicleAfterEdit()
+                                fuelSheetState.hide()
+                                fuelFormViewModel.resetForm()
+                                fuelFormViewModel.hideSheet()
+                            }
+                        }
+                    )
+                }
+            },
             sheetState = fuelSheetState,
             isProcessing = fuelFormUiState.isProcessing,
             isEdit = fuelFormUiState.isEdit,
@@ -186,9 +232,9 @@ fun FuelTracker() {
                     vehicleFormViewModel.updateVehicle(
                         context = context,
                         vehicle = vehicleFormUiState.selectedVehicle!!,
-                        onSuccess = { updatedVehicle ->
-                            vehicleViewModel.updateSelectedVehicleAfterEdit(updatedVehicle)
+                        onSuccess = {
                             scope.launch {
+                                vehicleViewModel.updateSelectedVehicleAfterEdit()
                                 vehicleSheetState.hide()
                                 vehicleFormViewModel.clearEdit()
                                 vehicleFormViewModel.hideSheet()
@@ -240,7 +286,7 @@ fun FuelTracker() {
                 }
             },
             onDeleteClick = {
-                if (deleteViewModel.deleteType == DeleteType.VEHICLE) {
+                if (deleteUiState.deleteType == DeleteType.VEHICLE) {
                     deleteViewModel.deleteVehicle(
                         context = context,
                         vehicle = deleteUiState.selectedVehicle!!,
@@ -262,9 +308,9 @@ fun FuelTracker() {
                         context = context,
                         fuel = deleteUiState.selectedFuel!!,
                         onSuccess = {
-                            // TODO: Check this
-                            fuelViewModel.removeFromList(deleteUiState.selectedFuel!!)
                             scope.launch {
+                                vehicleViewModel.updateSelectedVehicleAfterEdit()
+                                fuelViewModel.removeFromList(deleteUiState.selectedFuel!!)
                                 deleteSheetState.hide()
                                 deleteViewModel.clear()
                                 deleteViewModel.hideSheet()
@@ -282,7 +328,6 @@ fun FuelTracker() {
 }
 
 // TODO: Features and stuff
-//  - CRUD Refueling
 //  - Statistics (charts?)
 //  - Google login
 //  - Backup and restore (google drive?)

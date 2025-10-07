@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleRepository
+import id.reishandy.fueltracker.helper.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -200,7 +201,7 @@ class VehicleFormViewModel @Inject constructor(
     fun updateVehicle(
         context: Context,
         vehicle: Vehicle,
-                onSuccess: (Vehicle) -> Unit = { _ -> },
+        onSuccess: () -> Unit = {  },
     ) {
         if (!validateForm()) return
 
@@ -219,7 +220,7 @@ class VehicleFormViewModel @Inject constructor(
 
                 showToast(context, "Vehicle edited successfully")
 
-                onSuccess(updatedVehicle)
+                onSuccess()
             } catch (e: Exception) {
                 showToast(context, "Error editing vehicle: ${e.message}", true)
             } finally {

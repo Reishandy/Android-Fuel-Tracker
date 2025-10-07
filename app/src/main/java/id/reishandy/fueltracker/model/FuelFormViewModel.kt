@@ -1,16 +1,21 @@
 package id.reishandy.fueltracker.model
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import id.reishandy.fueltracker.data.fuel.Fuel
 import id.reishandy.fueltracker.data.fuel.FuelRepository
+import id.reishandy.fueltracker.data.vehicle.Vehicle
+import id.reishandy.fueltracker.helper.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class FuelFormErrorState(
@@ -130,5 +135,147 @@ class FuelFormViewModel @Inject constructor(
         _uiState.update { it.copy(showSheet = false) }
     }
 
-    // Fuel added validation maximum is vehicle max tank capacity
+    fun validateForm(
+        vehicle: Vehicle,
+        previousOdometer: Double?
+    ): Boolean {
+        var isValid = true
+        val errorState = FuelFormErrorState()
+
+        if (odometer.isBlank()) {
+            errorState.odometerError = "Odometer is required"
+            isValid = false
+        } else {
+            val odometerValue = odometer.toDoubleOrNull()
+            if (odometerValue == null || odometerValue < 0) {
+                errorState.odometerError = "Odometer must be a positive number"
+                isValid = false
+            }
+
+            if (previousOdometer != null && odometerValue != null && odometerValue < previousOdometer) {
+                errorState.odometerError = "Odometer cannot be less than max reading ($previousOdometer km)"
+                isValid = false
+            }
+        }
+
+        if (trip.isBlank()) {
+            errorState.tripError = "Trip is required"
+            isValid = false
+        } else {
+            val tripValue = trip.toDoubleOrNull()
+            if (tripValue == null || tripValue < 0) {
+                errorState.tripError = "Trip must be a positive number"
+                isValid = false
+            }
+        }
+
+        if (fuelAdded.isBlank()) {
+            errorState.fuelAddedError = "Fuel added is required"
+            isValid = false
+        } else {
+            val fuelAddedValue = fuelAdded.toDoubleOrNull()
+            if (fuelAddedValue == null || fuelAddedValue <= 0) {
+                errorState.fuelAddedError = "Fuel added must be a positive number"
+                isValid = false
+            }
+
+            if (fuelAddedValue != null && fuelAddedValue > vehicle.maxFuelCapacity) {
+                errorState.fuelAddedError = "Fuel added cannot exceed max capacity (${vehicle.maxFuelCapacity} L)"
+                isValid = false
+            }
+        }
+
+        if (fuelType.isBlank()) {
+            errorState.fuelTypeError = "Fuel type is required"
+            isValid = false
+        }
+
+        if (pricePerLiter.isBlank()) {
+            errorState.pricePerLiterError = "Price per liter is required"
+            isValid = false
+        } else {
+            val pricePerLiterValue = pricePerLiter.toDoubleOrNull()
+            if (pricePerLiterValue == null || pricePerLiterValue <= 0) {
+                errorState.pricePerLiterError = "Price per liter must be a positive number"
+                isValid = false
+            }
+        }
+
+        _uiState.update { it.copy(errorState = errorState) }
+        return isValid
+    }
+
+    fun addFuel(
+        context: Context,
+        vehicle: Vehicle,
+        previousOdometer: Double?,
+        onSuccess: () -> Unit = { },
+    ) {
+        if (!validateForm(vehicle, previousOdometer)) return
+
+        viewModelScope.launch {
+            try {
+                setProcessing(true)
+                // TODO: Sync cloud?
+
+                val newFuel = Fuel(
+                    date = date,
+                    odometer = odometer.toDouble(),
+                    trip = trip.toDouble(),
+                    fuelAdded = fuelAdded.toDouble(),
+                    fuelType = fuelType,
+                    pricePerLiter = pricePerLiter.toDouble(),
+                    vehicleId = vehicle.id,
+                    // This will be calculated in repository
+                    totalCost = 0.0,
+                    fuelEconomy = 0.0,
+                    costPerKm = 0.0,
+                    fuelRemaining = 0.0,
+                )
+                fuelRepository.insert(newFuel)
+
+                                showToast(context, "Refuel recorded successfully")
+
+                onSuccess()
+            } catch (e: Exception) {
+                showToast(context, "Error recording fuel: ${e.message}", true)
+            } finally {
+                setProcessing(false)
+            }
+        }
+    }
+
+    fun updateFuel(
+        context: Context,
+        vehicle: Vehicle,
+        previousOdometer: Double?,
+        fuel: Fuel,
+        onSuccess: () -> Unit = { },
+    ) {
+        if (!validateForm(vehicle, previousOdometer)) return
+
+        viewModelScope.launch {
+            try {
+                setProcessing(true)
+
+                val updatedFuel = fuel.copy(
+                    date = date,
+                    odometer = odometer.toDouble(),
+                    trip = trip.toDouble(),
+                    fuelAdded = fuelAdded.toDouble(),
+                    fuelType = fuelType,
+                    pricePerLiter = pricePerLiter.toDouble(),
+                )
+                fuelRepository.update(updatedFuel)
+
+                showToast(context, "Refuel edited successfully")
+
+                onSuccess()
+            } catch (e: Exception) {
+                showToast(context, "Error updating refuel: ${e.message}", true)
+            } finally {
+                setProcessing(false)
+            }
+        }
+    }
 }

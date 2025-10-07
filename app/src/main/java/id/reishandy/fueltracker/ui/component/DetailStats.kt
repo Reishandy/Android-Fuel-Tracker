@@ -48,7 +48,6 @@ fun DetailStats(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
         ) {
-            // TODO: Decimal trailing coma
             DetailCard(
                 modifier = Modifier.weight(2 / 3f),
                 title = R.string.odometer,

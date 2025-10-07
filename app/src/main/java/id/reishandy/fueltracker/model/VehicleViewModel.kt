@@ -42,12 +42,9 @@ class VehicleViewModel @Inject constructor(
         _uiState.update { it.copy(selectedVehicleWithStats = vehicleWithStats) }
     }
 
-    fun updateSelectedVehicleAfterEdit(updatedVehicle: Vehicle) {
-        val currentSelected = _uiState.value.selectedVehicleWithStats
-        if (currentSelected != null && currentSelected.vehicle.id == updatedVehicle.id) {
-            _uiState.update { state ->
-                state.copy(selectedVehicleWithStats = currentSelected.copy(vehicle = updatedVehicle))
-            }
-        }
+    suspend fun updateSelectedVehicleAfterEdit() {
+        val current = _uiState.value.selectedVehicleWithStats ?: return
+        val updatedVehicleWithStats = vehicleRepository.getByIdWithStats(current.vehicle.id)
+        _uiState.update { it.copy(selectedVehicleWithStats = updatedVehicleWithStats) }
     }
 }

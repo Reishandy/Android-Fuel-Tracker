@@ -54,11 +54,14 @@ interface VehicleDao {
     COALESCE((SELECT SUM(f.total_cost) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS total_spent,
     COALESCE((SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id), 0) AS refuel_count,
     COALESCE(
-        CASE 
+        CASE
             WHEN (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) = 0 THEN 0.0
-            ELSE 
-                (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) * 30.44 / 
-                (CAST((strftime('%s', 'now') - MIN(f2.date) / 1000) AS REAL) / 86400.0)
+            ELSE
+                (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) /
+                CASE 
+                    WHEN ((julianday('now') - julianday(datetime(MIN(f2.date) / 1000, 'unixepoch'))) / 30.44) < 1.0 THEN 1.0
+                    ELSE ((julianday('now') - julianday(datetime(MIN(f2.date) / 1000, 'unixepoch'))) / 30.44)
+                END
         END, 0.0
     ) AS refuel_per_month,
     COALESCE((SELECT AVG(f.fuel_added) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS avg_liter_refueled,
@@ -101,11 +104,14 @@ interface VehicleDao {
     COALESCE((SELECT SUM(f.total_cost) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS total_spent,
     COALESCE((SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id), 0) AS refuel_count,
     COALESCE(
-        CASE 
+        CASE
             WHEN (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) = 0 THEN 0.0
-            ELSE 
-                (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) * 30.44 / 
-                (CAST((strftime('%s', 'now') - MIN(f2.date) / 1000) AS REAL) / 86400.0)
+            ELSE
+                (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) /
+                CASE 
+                    WHEN ((julianday('now') - julianday(datetime(MIN(f2.date) / 1000, 'unixepoch'))) / 30.44) < 1.0 THEN 1.0
+                    ELSE ((julianday('now') - julianday(datetime(MIN(f2.date) / 1000, 'unixepoch'))) / 30.44)
+                END
         END, 0.0
     ) AS refuel_per_month,
     COALESCE((SELECT AVG(f.fuel_added) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS avg_liter_refueled,

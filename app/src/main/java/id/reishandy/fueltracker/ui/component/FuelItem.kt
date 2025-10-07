@@ -231,7 +231,7 @@ fun FuelItem(
                         FuelItemDetail(
                             modifier = Modifier.weight(1 / 3f),
                             label = R.string.filled_percent,
-                            value = if (maxFuelCapacity > 0.0) formatNumber(fuel.fuelRemaining / maxFuelCapacity * 100.0) + "%" else "N/A"
+                            value = if (maxFuelCapacity > 0.0) formatNumber(fuel.fuelAdded / maxFuelCapacity * 100.0) + "%" else "N/A"
                         )
                     }
 
