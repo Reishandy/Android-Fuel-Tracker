@@ -40,4 +40,10 @@ class FuelViewModel @Inject constructor(
     fun updateSelectedFuel(fuel: Fuel?) {
         _uiState.update { it.copy(selectedFuel = fuel) }
     }
+
+    fun removeFromList(fuel: Fuel) {
+        _uiState.update { currentState ->
+            currentState.copy(fuels = currentState.fuels.filter { it.id != fuel.id })
+        }
+    }
 }

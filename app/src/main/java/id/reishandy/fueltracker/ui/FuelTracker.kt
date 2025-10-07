@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import id.reishandy.fueltracker.model.DeleteType
 import id.reishandy.fueltracker.model.DeleteViewModel
 import id.reishandy.fueltracker.model.FuelFormViewModel
 import id.reishandy.fueltracker.model.FuelViewModel
@@ -83,6 +84,7 @@ fun FuelTracker() {
                     },
                     onDeleteVehicleClick = { vehicle ->
                         deleteViewModel.updateSelectedVehicle(vehicle)
+                        deleteViewModel.setDeleteType(DeleteType.VEHICLE)
                         deleteViewModel.showSheet()
                     },
                     onVehicleClick = { vehicleWithStats ->
@@ -121,7 +123,9 @@ fun FuelTracker() {
                         /* TODO: Implement edit fuel  */
                     },
                     onFuelDeleteClick = { fuel ->
-                        /* TODO: Implement delete fuel  */
+                        deleteViewModel.updateSelectedFuel(fuel)
+                        deleteViewModel.setDeleteType(DeleteType.FUEL)
+                        deleteViewModel.showSheet()
                     }
                 )
             }
@@ -236,22 +240,38 @@ fun FuelTracker() {
                 }
             },
             onDeleteClick = {
-                deleteViewModel.deleteVehicle(
-                    context = context,
-                    vehicle = deleteUiState.selectedVehicle!!,
-                    onSuccess = {
-                        scope.launch {
-                            if (deleteViewModel.isOnDetails) {
-                                deleteViewModel.setIsOnDetails(false)
-                                navController.popBackStack()
-                            }
+                if (deleteViewModel.deleteType == DeleteType.VEHICLE) {
+                    deleteViewModel.deleteVehicle(
+                        context = context,
+                        vehicle = deleteUiState.selectedVehicle!!,
+                        onSuccess = {
+                            scope.launch {
+                                if (deleteViewModel.isOnDetails) {
+                                    deleteViewModel.setIsOnDetails(false)
+                                    navController.popBackStack()
+                                }
 
-                            deleteSheetState.hide()
-                            deleteViewModel.clear()
-                            deleteViewModel.hideSheet()
+                                deleteSheetState.hide()
+                                deleteViewModel.clear()
+                                deleteViewModel.hideSheet()
+                            }
                         }
-                    }
-                )
+                    )
+                } else {
+                    deleteViewModel.deleteFuel(
+                        context = context,
+                        fuel = deleteUiState.selectedFuel!!,
+                        onSuccess = {
+                            // TODO: Check this
+                            fuelViewModel.removeFromList(deleteUiState.selectedFuel!!)
+                            scope.launch {
+                                deleteSheetState.hide()
+                                deleteViewModel.clear()
+                                deleteViewModel.hideSheet()
+                            }
+                        }
+                    )
+                }
             },
             sheetState = deleteSheetState,
             isProcessing = deleteUiState.isProcessing,

@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import id.reishandy.fueltracker.data.fuel.Fuel
+import id.reishandy.fueltracker.data.fuel.FuelRepository
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,16 +18,23 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+enum class DeleteType {
+    VEHICLE,
+    FUEL
+}
+
 data class DeleteState(
     val showSheet: Boolean = false,
     val isProcessing: Boolean = false,
     val name: String = "",
     val selectedVehicle: Vehicle? = null,
+    val selectedFuel: Fuel? = null
 )
 
 @HiltViewModel
 class DeleteViewModel @Inject constructor(
-    private val vehicleRepository: VehicleRepository
+    private val vehicleRepository: VehicleRepository,
+    private val fuelRepository: FuelRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DeleteState())
     val uiState: StateFlow<DeleteState> = _uiState.asStateFlow()
@@ -33,8 +42,15 @@ class DeleteViewModel @Inject constructor(
     var isOnDetails by mutableStateOf(false)
         private set
 
+    var deleteType by mutableStateOf(DeleteType.VEHICLE)
+        private set
+
     fun setIsOnDetails(value: Boolean) {
         isOnDetails = value
+    }
+
+    fun setDeleteType(value: DeleteType) {
+        deleteType = value
     }
 
     fun showSheet() {
@@ -49,23 +65,26 @@ class DeleteViewModel @Inject constructor(
         _uiState.update { it.copy(isProcessing = isProcessing) }
     }
 
-    fun updateSelectedVehicle(vehicle: Vehicle?) {
+    fun updateSelectedVehicle(vehicle: Vehicle) {
         _uiState.update {
             it.copy(
-                name = vehicle?.name ?: "N/A",
+                name = vehicle.name,
                 selectedVehicle = vehicle
             )
         }
     }
 
-    fun clear() {
+    fun updateSelectedFuel(fuel: Fuel) {
         _uiState.update {
             it.copy(
-                name = "",
-                selectedVehicle = null
-                // TODO: Fuel
+                name = "${convertMillisToDate(fuel.date)} - ${fuel.fuelAdded} L",
+                selectedFuel = fuel
             )
         }
+    }
+
+    fun clear() {
+        _uiState.update { DeleteState() }
     }
 
     fun deleteVehicle(
@@ -84,6 +103,28 @@ class DeleteViewModel @Inject constructor(
                 onSuccess()
             } catch (e: Exception) {
                 showToast(context, "Error deleting vehicle: ${e.message}")
+            } finally {
+                setProcessing(false)
+            }
+        }
+    }
+
+    fun deleteFuel(
+        context: Context,
+        fuel: Fuel,
+        onSuccess: () -> Unit = { },
+    ) {
+        viewModelScope.launch {
+            try {
+                setProcessing(true)
+
+                fuelRepository.delete(fuel)
+
+                showToast(context, "Refuel deleted successfully")
+
+                onSuccess()
+            } catch (e: Exception) {
+                showToast(context, "Error deleting refuel: ${e.message}")
             } finally {
                 setProcessing(false)
             }
