@@ -9,7 +9,7 @@ import id.reishandy.fueltracker.data.vehicle.VehicleDao
 
 @Database(
     entities = [Vehicle::class, Fuel::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class FuelTrackerAppDatabase : RoomDatabase() {

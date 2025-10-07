@@ -137,7 +137,7 @@ class FuelFormViewModel @Inject constructor(
 
     fun validateForm(
         vehicle: Vehicle,
-        previousOdometer: Double?
+        previousOdometer: Int?
     ): Boolean {
         var isValid = true
         val errorState = FuelFormErrorState()
@@ -146,7 +146,7 @@ class FuelFormViewModel @Inject constructor(
             errorState.odometerError = "Odometer is required"
             isValid = false
         } else {
-            val odometerValue = odometer.toDoubleOrNull()
+            val odometerValue = odometer.toIntOrNull()
             if (odometerValue == null || odometerValue < 0) {
                 errorState.odometerError = "Odometer must be a positive number"
                 isValid = false
@@ -162,7 +162,7 @@ class FuelFormViewModel @Inject constructor(
             errorState.tripError = "Trip is required"
             isValid = false
         } else {
-            val tripValue = trip.toDoubleOrNull()
+            val tripValue = trip.toIntOrNull()
             if (tripValue == null || tripValue < 0) {
                 errorState.tripError = "Trip must be a positive number"
                 isValid = false
@@ -208,7 +208,7 @@ class FuelFormViewModel @Inject constructor(
     fun addFuel(
         context: Context,
         vehicle: Vehicle,
-        previousOdometer: Double?,
+        previousOdometer: Int?,
         onSuccess: () -> Unit = { },
     ) {
         if (!validateForm(vehicle, previousOdometer)) return
@@ -220,8 +220,8 @@ class FuelFormViewModel @Inject constructor(
 
                 val newFuel = Fuel(
                     date = date,
-                    odometer = odometer.toDouble(),
-                    trip = trip.toDouble(),
+                    odometer = odometer.toInt(),
+                    trip = trip.toInt(),
                     fuelAdded = fuelAdded.toDouble(),
                     fuelType = fuelType,
                     pricePerLiter = pricePerLiter.toDouble(),
@@ -248,7 +248,7 @@ class FuelFormViewModel @Inject constructor(
     fun updateFuel(
         context: Context,
         vehicle: Vehicle,
-        previousOdometer: Double?,
+        previousOdometer: Int?,
         fuel: Fuel,
         onSuccess: () -> Unit = { },
     ) {
@@ -260,8 +260,8 @@ class FuelFormViewModel @Inject constructor(
 
                 val updatedFuel = fuel.copy(
                     date = date,
-                    odometer = odometer.toDouble(),
-                    trip = trip.toDouble(),
+                    odometer = odometer.toInt(),
+                    trip = trip.toInt(),
                     fuelAdded = fuelAdded.toDouble(),
                     fuelType = fuelType,
                     pricePerLiter = pricePerLiter.toDouble(),
@@ -279,9 +279,9 @@ class FuelFormViewModel @Inject constructor(
         }
     }
 
-    fun calculateTripFromPreviousOdometer(previousOdometer: Double?) {
+    fun calculateTripFromPreviousOdometer(previousOdometer: Int?) {
         if (previousOdometer == null) return
-        val odometerValue = odometer.toDoubleOrNull()
+        val odometerValue = odometer.toIntOrNull()
 
         if (odometerValue == null || odometerValue < 0) {
             _uiState.update {

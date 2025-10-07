@@ -46,8 +46,8 @@ fun FuelItem(
         id = 0,
         vehicleId = 0,
         date = 0,
-        odometer = 0.0,
-        trip = 0.0,
+        odometer = 0,
+        trip = 0,
         fuelAdded = 0.0,
         fuelType = "",
         pricePerLiter = 0.0,
@@ -103,7 +103,7 @@ fun FuelItem(
                 }
 
                 Text(
-                    text = stringResource(R.string.remain_liter_value, fuel.fuelRemaining),
+                    text = stringResource(R.string.remain_liter_value, formatNumber(fuel.fuelRemaining, 1)),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -200,7 +200,7 @@ fun FuelItem(
                                 label = R.string.odometer,
                                 value = stringResource(
                                     R.string.km_abbr_value,
-                                    formatNumber(fuel.odometer)
+                                    formatNumber(fuel.odometer.toDouble())
                                 )
                             )
                             FuelItemDetail(
@@ -220,7 +220,7 @@ fun FuelItem(
                                 label = R.string.trip,
                                 value = stringResource(
                                     R.string.km_abbr_value,
-                                    formatNumber(fuel.trip)
+                                    formatNumber(fuel.trip.toDouble())
                                 )
                             )
                             FuelItemDetail(
@@ -320,8 +320,8 @@ internal fun PreviewFuelItem() {
                 id = 1,
                 vehicleId = 1,
                 date = 1705324800000,
-                odometer = 15000.0,
-                trip = 250.0,
+                odometer = 15000,
+                trip = 250,
                 fuelAdded = 5.0,
                 fuelType = "Pertalite",
                 pricePerLiter = 10_000.0,

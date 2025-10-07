@@ -356,8 +356,7 @@ fun FuelTracker() {
 }
 
 // TODO: Features and stuff
-//  - Change stuff from Double to Int where applicable like odometer and trip
-//  - Statistics (charts?)
+//  - Fix date picker not able to select current date
 //  - Google login
 //  - Backup and restore (google drive?)
 //  - Sync every CRUD or db update

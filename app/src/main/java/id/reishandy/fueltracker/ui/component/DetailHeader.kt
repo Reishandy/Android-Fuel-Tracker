@@ -32,7 +32,7 @@ fun DetailHeader(
             year = 0,
             maxFuelCapacity = 0.0
         ),
-        latestOdometer = 0.0,
+        latestOdometer = 0,
         averageFuelEconomy = 0.0
     )
 ) {
@@ -89,7 +89,7 @@ fun DetailHeaderPreview() {
                         year = 2024,
                         maxFuelCapacity = 8.0
                     ),
-                    latestOdometer = 15000.0,
+                    latestOdometer = 15000,
                     averageFuelEconomy = 39.5
                 )
             )

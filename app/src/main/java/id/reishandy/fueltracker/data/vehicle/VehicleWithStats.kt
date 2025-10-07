@@ -8,7 +8,7 @@ data class VehicleWithStats(
     val vehicle: Vehicle,
 
     @ColumnInfo(name = "latest_odometer")
-    val latestOdometer: Double = 0.0,
+    val latestOdometer: Int = 0,
 
     @ColumnInfo(name = "average_fuel_economy")
     val averageFuelEconomy: Double = 0.0,

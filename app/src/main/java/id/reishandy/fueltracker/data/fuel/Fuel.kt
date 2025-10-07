@@ -6,7 +6,6 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import id.reishandy.fueltracker.data.vehicle.Vehicle
-import java.util.Locale
 
 @Entity(
     tableName = "fuels",
@@ -35,10 +34,10 @@ data class Fuel(
     val date: Long,
 
     @ColumnInfo(name = "odometer")
-    val odometer: Double,
+    val odometer: Int,
 
     @ColumnInfo(name = "trip")
-    val trip: Double,
+    val trip: Int,
 
     @ColumnInfo(name = "fuel_added")
     val fuelAdded: Double,

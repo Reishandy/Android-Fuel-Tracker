@@ -165,7 +165,7 @@ fun FuelFormBottomSheet(
                             Text(text = stringResource(R.string.km_abbr))
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Decimal,
+                            keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Next
                         ),
                         singleLine = true,
@@ -196,7 +196,7 @@ fun FuelFormBottomSheet(
                                 Text(text = stringResource(R.string.km_abbr))
                             },
                             keyboardOptions = KeyboardOptions.Default.copy(
-                                keyboardType = KeyboardType.Decimal,
+                                keyboardType = KeyboardType.Number,
                                 imeAction = ImeAction.Next
                             ),
                             singleLine = true,

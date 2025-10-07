@@ -32,8 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
-import id.reishandy.fueltracker.util.formatNumber
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
+import id.reishandy.fueltracker.util.formatNumber
 
 @Composable
 fun VehicleItem(
@@ -47,7 +47,7 @@ fun VehicleItem(
             year = 0,
             maxFuelCapacity = 0.0
         ),
-        latestOdometer = 0.0,
+        latestOdometer = 0,
         averageFuelEconomy = 0.0,
         totalFuelAdded = 0.0,
         totalSpent = 0.0,
@@ -126,7 +126,7 @@ fun VehicleItem(
                 Text(
                     text = stringResource(
                         R.string.km_abbr_value,
-                        formatNumber(vehicleWithStats.latestOdometer)
+                        formatNumber(vehicleWithStats.latestOdometer.toDouble())
                     ),
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -202,7 +202,7 @@ internal fun PreviewVehicleItem() {
                     year = 2024,
                     maxFuelCapacity = 8.1
                 ),
-                latestOdometer = 980000.0,
+                latestOdometer = 980000,
                 averageFuelEconomy = 39.99,
                 totalFuelAdded = 420.0,
                 totalSpent = 4200000.0,

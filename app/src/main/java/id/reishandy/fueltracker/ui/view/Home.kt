@@ -127,7 +127,7 @@ internal fun PreviewHome() {
                             year = 2010,
                             maxFuelCapacity = 45.0
                         ),
-                        latestOdometer = 150000.0,
+                        latestOdometer = 150000,
                         averageFuelEconomy = 14.5,
                         totalFuelAdded = 400.0,
                         totalSpent = 12000000.0,
@@ -145,7 +145,7 @@ internal fun PreviewHome() {
                             year = 2019,
                             maxFuelCapacity = 5.5
                         ),
-                        latestOdometer = 25000.0,
+                        latestOdometer = 25000,
                         averageFuelEconomy = 45.0,
                         totalFuelAdded = 150.0,
                         totalSpent = 3000000.0,
@@ -163,7 +163,7 @@ internal fun PreviewHome() {
                             year = 2021,
                             maxFuelCapacity = 7.1
                         ),
-                        latestOdometer = 12000.0,
+                        latestOdometer = 12000,
                         averageFuelEconomy = 42.0,
                         totalFuelAdded = 60.0,
                         totalSpent = 1800000.0,
@@ -181,7 +181,7 @@ internal fun PreviewHome() {
                             year = 2005,
                             maxFuelCapacity = 42.0
                         ),
-                        latestOdometer = 220000.0,
+                        latestOdometer = 220000,
                         averageFuelEconomy = 10.5,
                         totalFuelAdded = 600.0,
                         totalSpent = 9000000.0,
