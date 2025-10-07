@@ -23,13 +23,14 @@
     <string name="max_fuel">Max Fuel</string>
     <string name="max_fuel_placeholder">e.g. 8.0</string>
     <string name="liter_abbr">L</string>
+    <string name="km_abbr">km</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="add_vehicle">Add Vehicle</string>
     <string name="edit_vehicle">Edit Vehicle</string>
     <string name="delete_confirmation">Delete Confirmation</string>
     <string name="delete">Delete</string>
-    <string name="delete_text">Are you sure want to delete \"%1$s\" entry? This action cannot be undone.</string>
+        <string name="delete_text">Are you sure you want to delete \"%1$s\" entry? This action cannot be undone.</string>
     <string name="edit">Edit</string>
     <string name="your_vehicles">Your Vehicles</string>
     <string name="vehicle_stats">Vehicle Stats</string>
@@ -52,4 +53,15 @@
     <string name="show_less">Show Less</string>
     <string name="show_more">Show More</string>
     <string name="edit_refuel">Edit Refuel</string>
+    <string name="date">Date</string>
+    <string name="ok">OK</string>
+    <string name="date_placeholder">Select Date</string>
+    <string name="odometer_placeholder">e.g. 7,890</string>
+    <string name="trip_placeholder">e.g. 315</string>
+    <string name="fuel_added">Fuel Added</string>
+    <string name="fuel_added_placeholder">e.g. 4.5</string>
+    <string name="fuel_type">Fuel Type</string>
+    <string name="fuel_type_placeholder">e.g. Pertamax</string>
+    <string name="price_per_liter">Price per Liter</string>
+    <string name="price_per_liter_placeholder">e.g. 12,200</string>
 </resources>

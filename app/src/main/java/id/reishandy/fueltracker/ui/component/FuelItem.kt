@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.fuel.Fuel
-import id.reishandy.fueltracker.data.fuel.getFormattedDate
+import id.reishandy.fueltracker.model.convertMillisToDate
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 import java.text.NumberFormat
 import java.util.Locale
@@ -89,7 +89,7 @@ fun FuelItem(
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    text = fuel.getFormattedDate(),
+                    text = convertMillisToDate(fuel.date),
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.padding(
                         horizontal = dimensionResource(R.dimen.padding_small),
