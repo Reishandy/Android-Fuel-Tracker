@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
@@ -45,8 +46,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
-import id.reishandy.fueltracker.util.convertMillisToDate
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
+import id.reishandy.fueltracker.util.convertMillisToDate
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -81,6 +82,8 @@ fun FuelFormBottomSheet(
     pricePerLiterValue: String = "",
     onPricePerLiterValueChange: (String) -> Unit = { },
     pricePerLiterError: String? = null,
+    canCalculateTrip: Boolean = true,
+    onCanCalculateTripClick: () -> Unit = { },
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
 
@@ -130,7 +133,9 @@ fun FuelFormBottomSheet(
                             )
                         },
                         readOnly = true,
-                        supportingText = if (dateError != null) { { Text(text = dateError) } } else null,
+                        supportingText = if (dateError != null) {
+                            { Text(text = dateError) }
+                        } else null,
                         isError = dateError != null,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next
@@ -152,7 +157,9 @@ fun FuelFormBottomSheet(
                                 contentDescription = null
                             )
                         },
-                        supportingText = if (odometerError != null) { { Text(text = odometerError) } } else null,
+                        supportingText = if (odometerError != null) {
+                            { Text(text = odometerError) }
+                        } else null,
                         isError = odometerError != null,
                         suffix = {
                             Text(text = stringResource(R.string.km_abbr))
@@ -166,31 +173,48 @@ fun FuelFormBottomSheet(
                     )
 
                     // TODO: Checkbox calculate trip from previous odometer
-                    TextField(
-                        value = tripValue,
-                        onValueChange = onTripValueChange,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        label = { Text(text = stringResource(R.string.trip)) },
-                        placeholder = { Text(text = stringResource(R.string.trip_placeholder)) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Route,
-                                contentDescription = null
-                            )
-                        },
-                        supportingText = if (tripError != null) { { Text(text = tripError) } } else null,
-                        isError = tripError != null,
-                        suffix = {
-                            Text(text = stringResource(R.string.km_abbr))
-                        },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Decimal,
-                            imeAction = ImeAction.Next
-                        ),
-                        singleLine = true,
-                        shape = MaterialTheme.shapes.small
-                    )
+                    Row {
+                        TextField(
+                            value = tripValue,
+                            onValueChange = onTripValueChange,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(3 / 4f),
+                            label = { Text(text = stringResource(R.string.trip)) },
+                            placeholder = { Text(text = stringResource(R.string.trip_placeholder)) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Route,
+                                    contentDescription = null
+                                )
+                            },
+                            supportingText = if (tripError != null) {
+                                { Text(text = tripError) }
+                            } else null,
+                            isError = tripError != null,
+                            suffix = {
+                                Text(text = stringResource(R.string.km_abbr))
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Next
+                            ),
+                            singleLine = true,
+                            shape = MaterialTheme.shapes.small
+                        )
+
+                        Button(
+                            onClick = onCanCalculateTripClick,
+                            modifier = Modifier
+                                .weight(1 / 4f)
+                                .padding(start = dimensionResource(R.dimen.padding_small))
+                                .height(dimensionResource(R.dimen.calc_button_height)),
+                            shape = MaterialTheme.shapes.small,
+                            enabled = canCalculateTrip,
+                        ) {
+                            Text(text = stringResource(R.string.calc))
+                        }
+                    }
 
                     TextField(
                         value = fuelAddedValue,
@@ -205,7 +229,9 @@ fun FuelFormBottomSheet(
                                 contentDescription = null
                             )
                         },
-                        supportingText = if (fuelAddedError != null) { { Text(text = fuelAddedError) } } else null,
+                        supportingText = if (fuelAddedError != null) {
+                            { Text(text = fuelAddedError) }
+                        } else null,
                         isError = fuelAddedError != null,
                         suffix = {
                             Text(text = stringResource(R.string.liter_abbr))
@@ -231,7 +257,9 @@ fun FuelFormBottomSheet(
                                 contentDescription = null
                             )
                         },
-                        supportingText = if (fuelTypeError != null) { { Text(text = fuelTypeError) } } else null,
+                        supportingText = if (fuelTypeError != null) {
+                            { Text(text = fuelTypeError) }
+                        } else null,
                         isError = fuelTypeError != null,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next
@@ -249,11 +277,14 @@ fun FuelFormBottomSheet(
                         placeholder = { Text(text = stringResource(R.string.price_per_liter_placeholder)) },
                         leadingIcon = {
                             Text(
-                                text = NumberFormat.getCurrencyInstance(Locale.getDefault()).currency?.symbol ?: "$",
+                                text = NumberFormat.getCurrencyInstance(Locale.getDefault()).currency?.symbol
+                                    ?: "$",
                                 style = MaterialTheme.typography.titleLarge
                             )
                         },
-                        supportingText = if (pricePerLiterError != null) { { Text(text = pricePerLiterError) } } else null,
+                        supportingText = if (pricePerLiterError != null) {
+                            { Text(text = pricePerLiterError) }
+                        } else null,
                         isError = pricePerLiterError != null,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Decimal,

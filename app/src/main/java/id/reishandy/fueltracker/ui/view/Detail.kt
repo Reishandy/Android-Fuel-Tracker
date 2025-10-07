@@ -106,7 +106,6 @@ fun Detail(
                     items(fuels) { fuel ->
                         FuelItem(
                             fuel = fuel,
-                            maxFuelCapacity = vehicleWithStats.vehicle.maxFuelCapacity,
                             onEditClick = { onFuelEditClick(fuel) },
                             onDeleteClick = { onFuelDeleteClick(fuel) },
                             expanded = expandedFuelIds.value.contains(fuel.id),

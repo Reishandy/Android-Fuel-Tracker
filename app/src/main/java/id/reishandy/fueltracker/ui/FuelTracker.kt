@@ -94,6 +94,7 @@ fun FuelTracker() {
                         deleteViewModel.showSheet()
                     },
                     onVehicleClick = { vehicleWithStats ->
+                        fuelFormViewModel.clearEdit()
                         vehicleViewModel.updateSelectedVehicleWithStats(vehicleWithStats)
                         fuelViewModel.populateFuels(vehicleWithStats.vehicle.id)
                         navController.navigate(FuelTrackerNav.VEHICLE_DETAIL.name)
@@ -195,7 +196,7 @@ fun FuelTracker() {
                     fuelFormViewModel.addFuel(
                         context = context,
                         vehicle = vehicleUiState.selectedVehicleWithStats!!.vehicle,
-                        previousOdometer = fuelUiState.fuels.maxByOrNull { it.odometer }?.odometer,
+                        previousOdometer = fuelUiState.fuels.maxByOrNull { it.id }?.odometer,
                         onSuccess = {
                             scope.launch {
                                 fuelViewModel.populateFuels(vehicleUiState.selectedVehicleWithStats!!.vehicle.id)
@@ -229,7 +230,16 @@ fun FuelTracker() {
             fuelTypeError = fuelFormUiState.errorState.fuelTypeError,
             pricePerLiterValue = fuelFormViewModel.pricePerLiter,
             onPricePerLiterValueChange = { fuelFormViewModel.updatePricePerLiter(it) },
-            pricePerLiterError = fuelFormUiState.errorState.pricePerLiterError
+            pricePerLiterError = fuelFormUiState.errorState.pricePerLiterError,
+            canCalculateTrip = fuelFormViewModel.odometer.isNotEmpty() && fuelUiState.fuels.isNotEmpty() &&
+                    (if (fuelFormUiState.isEdit) fuelFormUiState.selectedFuel!!.id != fuelUiState.fuels.minByOrNull { it.id }?.id else true),
+            onCanCalculateTripClick = {
+                fuelFormViewModel.calculateTripFromPreviousOdometer(
+                    if (fuelFormUiState.isEdit) fuelUiState.fuels
+                        .filter { fuel -> fuel.id < fuelFormUiState.selectedFuel!!.id }
+                        .maxByOrNull { it.id }?.odometer else fuelUiState.fuels.maxByOrNull { it.id }?.odometer
+                )
+            }
         )
 
 
@@ -346,6 +356,7 @@ fun FuelTracker() {
 }
 
 // TODO: Features and stuff
+//  - Change stuff from Double to Int where applicable like odometer and trip
 //  - Statistics (charts?)
 //  - Google login
 //  - Backup and restore (google drive?)

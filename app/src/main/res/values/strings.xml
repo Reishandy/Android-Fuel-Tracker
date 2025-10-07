@@ -56,14 +56,14 @@
     <string name="date">Date</string>
     <string name="ok">OK</string>
     <string name="date_placeholder">Select Date</string>
-    <string name="odometer_placeholder">e.g. 7,890</string>
+    <string name="odometer_placeholder">e.g. 7890</string>
     <string name="trip_placeholder">e.g. 315</string>
     <string name="fuel_added">Fuel Added</string>
     <string name="fuel_added_placeholder">e.g. 4.5</string>
     <string name="fuel_type">Fuel Type</string>
     <string name="fuel_type_placeholder">e.g. Pertamax</string>
     <string name="price_per_liter">Price per Liter</string>
-    <string name="price_per_liter_placeholder">e.g. 12,200</string>
+    <string name="price_per_liter_placeholder">e.g. 12200</string>
     <string name="back">Back</string>
     <string name="reishandy_s">Reishandy\'s</string>
     <string name="fuel_tracker">Fuel Tracker</string>
@@ -72,4 +72,7 @@
     <string name="logout">Log Out</string>
     <string name="locale">Locale</string>
     <string name="locale_description">This changes the app\'s locale and will affect currency, date, and number formatting.</string>
+    <string name="calculate_trip_from_odometer">Calculate trip from previous odometer</string>
+    <string name="calc">Calc</string>
+    <string name="remain_liter_value">Remain %1$s L</string>
 </resources>

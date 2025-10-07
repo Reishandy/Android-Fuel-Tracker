@@ -153,7 +153,7 @@ class FuelFormViewModel @Inject constructor(
             }
 
             if (previousOdometer != null && odometerValue != null && odometerValue < previousOdometer) {
-                errorState.odometerError = "Odometer cannot be less than max reading ($previousOdometer km)"
+                errorState.odometerError = "Odometer cannot be less than previous reading ($previousOdometer km)"
                 isValid = false
             }
         }
@@ -277,5 +277,43 @@ class FuelFormViewModel @Inject constructor(
                 setProcessing(false)
             }
         }
+    }
+
+    fun calculateTripFromPreviousOdometer(previousOdometer: Double?) {
+        if (previousOdometer == null) return
+        val odometerValue = odometer.toDoubleOrNull()
+
+        if (odometerValue == null || odometerValue < 0) {
+            _uiState.update {
+                it.copy(
+                    errorState = it.errorState.copy(
+                        odometerError = "Odometer must be a positive number"
+                    )
+                )
+            }
+            return
+        }
+
+        if (odometerValue < previousOdometer) {
+            _uiState.update {
+                it.copy(
+                    errorState = it.errorState.copy(
+                        odometerError = "Odometer cannot be less than previous reading ($previousOdometer km)"
+                    )
+                )
+            }
+            return
+        }
+
+        trip = (odometerValue - previousOdometer).toString()
+
+        _uiState.update {
+            it.copy(
+                errorState = it.errorState.copy(
+                    odometerError = null
+                )
+            )
+        }
+
     }
 }

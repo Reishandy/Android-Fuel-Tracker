@@ -34,10 +34,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.data.fuel.Fuel
+import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 import id.reishandy.fueltracker.util.convertMillisToDate
 import id.reishandy.fueltracker.util.formatCurrency
 import id.reishandy.fueltracker.util.formatNumber
-import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 
 @Composable
 fun FuelItem(
@@ -56,7 +56,6 @@ fun FuelItem(
         costPerKm = 0.0,
         fuelRemaining = 0.0
     ),
-    maxFuelCapacity: Double = 0.0,
     onEditClick: (Fuel) -> Unit = { _ -> },
     onDeleteClick: (Fuel) -> Unit = { _ -> },
     expanded: Boolean = false,
@@ -81,20 +80,32 @@ fun FuelItem(
                 .padding(dimensionResource(R.dimen.padding_medium)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
         ) {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                ),
-                shape = MaterialTheme.shapes.small
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = convertMillisToDate(fuel.date),
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(
-                        horizontal = dimensionResource(R.dimen.padding_small),
-                        vertical = dimensionResource(R.dimen.padding_extra_small)
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    ),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(
+                        text = convertMillisToDate(fuel.date),
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(
+                            horizontal = dimensionResource(R.dimen.padding_small),
+                            vertical = dimensionResource(R.dimen.padding_extra_small)
+                        )
                     )
+                }
+
+                Text(
+                    text = stringResource(R.string.remain_liter_value, fuel.fuelRemaining),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
@@ -174,65 +185,52 @@ fun FuelItem(
 
             if (expanded) {
                 Column(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
                     ) {
-                        FuelItemDetail(
-                            modifier = Modifier.weight(1 / 3f),
-                            label = R.string.odometer,
-                            value = stringResource(
-                                R.string.km_abbr_value,
-                                formatNumber(fuel.odometer)
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+                        ) {
+                            FuelItemDetail(
+                                label = R.string.odometer,
+                                value = stringResource(
+                                    R.string.km_abbr_value,
+                                    formatNumber(fuel.odometer)
+                                )
                             )
-                        )
-
-                        FuelItemDetail(
-                            modifier = Modifier.weight(1 / 3f),
-                            label = R.string.trip,
-                            value = stringResource(
-                                R.string.km_abbr_value,
-                                formatNumber(fuel.trip)
+                            FuelItemDetail(
+                                label = R.string.fuel_economy,
+                                value = stringResource(
+                                    R.string.kml_abbr_value,
+                                    formatNumber(fuel.fuelEconomy, 2)
+                                )
                             )
-                        )
+                        }
 
-                        FuelItemDetail(
-                            modifier = Modifier.weight(1 / 3f),
-                            label = R.string.fuel_remain,
-                            value = stringResource(
-                                R.string.liter_abbr_value,
-                                formatNumber(fuel.fuelRemaining, 1)
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+                        ) {
+                            FuelItemDetail(
+                                label = R.string.trip,
+                                value = stringResource(
+                                    R.string.km_abbr_value,
+                                    formatNumber(fuel.trip)
+                                )
                             )
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        FuelItemDetail(
-                            modifier = Modifier.weight(1 / 3f),
-                            label = R.string.fuel_economy,
-                            value = stringResource(
-                                R.string.kml_abbr_value,
-                                formatNumber(fuel.fuelEconomy, 2)
+                            FuelItemDetail(
+                                label = R.string.cost_per_km,
+                                value = stringResource(
+                                    R.string.per_km_value,
+                                    formatCurrency(fuel.costPerKm)
+                                )
                             )
-                        )
-
-                        FuelItemDetail(
-                            modifier = Modifier.weight(1 / 3f),
-                            label = R.string.cost_per_km,
-                            value = stringResource(
-                                R.string.per_km_value,
-                                formatCurrency(fuel.costPerKm)
-                            )
-                        )
-
-                        FuelItemDetail(
-                            modifier = Modifier.weight(1 / 3f),
-                            label = R.string.filled_percent,
-                            value = if (maxFuelCapacity > 0.0) formatNumber(fuel.fuelAdded / maxFuelCapacity * 100.0) + "%" else "N/A"
-                        )
+                        }
                     }
 
                     Row(
@@ -241,9 +239,7 @@ fun FuelItem(
                     ) {
                         Button(
                             onClick = { onDeleteClick(fuel) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1 / 2f),
+                            modifier = Modifier.weight(1f),
                             shape = MaterialTheme.shapes.medium,
                             colors = ButtonDefaults.buttonColors().copy(
                                 containerColor = MaterialTheme.colorScheme.errorContainer,
@@ -252,12 +248,9 @@ fun FuelItem(
                         ) {
                             Text(text = stringResource(R.string.delete))
                         }
-
                         Button(
                             onClick = { onEditClick(fuel) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1 / 2f),
+                            modifier = Modifier.weight(1f),
                             shape = MaterialTheme.shapes.medium,
                             colors = ButtonDefaults.buttonColors().copy(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -336,8 +329,7 @@ internal fun PreviewFuelItem() {
                 fuelEconomy = 50.0,
                 costPerKm = 200.0,
                 fuelRemaining = 3.0
-            ),
-            maxFuelCapacity = 40.0
+            )
         )
     }
 }
