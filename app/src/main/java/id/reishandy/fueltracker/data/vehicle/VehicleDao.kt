@@ -47,28 +47,45 @@ interface VehicleDao {
     @Transaction
     @Query(
         """
-    SELECT v.*,
-    COALESCE((SELECT MAX(f.odometer) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS latest_odometer,
-    COALESCE((SELECT AVG(f.fuel_economy) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS average_fuel_economy,
-    COALESCE((SELECT SUM(f.fuel_added) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS total_fuel_added,
-    COALESCE((SELECT SUM(f.total_cost) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS total_spent,
-    COALESCE((SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id), 0) AS refuel_count,
-    COALESCE(
+    WITH fuel_stats AS (
+        SELECT 
+            f.vehicle_id,
+            MAX(f.odometer) AS latest_odometer,
+            AVG(f.fuel_economy) AS average_fuel_economy,
+            SUM(f.fuel_added) AS total_fuel_added,
+            SUM(f.total_cost) AS total_spent,
+            COUNT(*) AS refuel_count,
+            AVG(f.fuel_added) AS avg_liter_refueled,
+            AVG(f.total_cost) AS avg_spent_per_refuel,
+            MIN(f.date) AS first_refuel_date,
+            MAX(f.date) AS last_refuel_date
+        FROM fuels f
+        GROUP BY f.vehicle_id
+    )
+    SELECT 
+        v.*,
+        COALESCE(fs.latest_odometer, 0.0) AS latest_odometer,
+        COALESCE(fs.average_fuel_economy, 0.0) AS average_fuel_economy,
+        COALESCE(fs.total_fuel_added, 0.0) AS total_fuel_added,
+        COALESCE(fs.total_spent, 0.0) AS total_spent,
+        COALESCE(fs.refuel_count, 0) AS refuel_count,
         CASE
-            WHEN (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) = 0 THEN 0.0
-            ELSE
-                (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) /
-                CASE 
-                    WHEN ((julianday('now') - julianday(datetime(MIN(f2.date) / 1000, 'unixepoch'))) / 30.44) < 1.0 THEN 1.0
-                    ELSE ((julianday('now') - julianday(datetime(MIN(f2.date) / 1000, 'unixepoch'))) / 30.44)
-                END
-        END, 0.0
-    ) AS refuel_per_month,
-    COALESCE((SELECT AVG(f.fuel_added) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS avg_liter_refueled,
-    COALESCE((SELECT AVG(f.total_cost) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS avg_spent_per_refuel
+            WHEN fs.refuel_count IS NULL OR fs.refuel_count = 0 THEN 0.0
+            ELSE 
+                CAST(fs.refuel_count AS REAL) /
+                (
+                    (CAST(strftime('%Y', datetime(fs.last_refuel_date / 1000, 'unixepoch')) AS INT) - 
+                     CAST(strftime('%Y', datetime(fs.first_refuel_date / 1000, 'unixepoch')) AS INT)) * 12 +
+                    (CAST(strftime('%m', datetime(fs.last_refuel_date / 1000, 'unixepoch')) AS INT) - 
+                     CAST(strftime('%m', datetime(fs.first_refuel_date / 1000, 'unixepoch')) AS INT)) + 1
+                )
+        END AS refuel_per_month,
+        
+        COALESCE(fs.avg_liter_refueled, 0.0) AS avg_liter_refueled,
+        COALESCE(fs.avg_spent_per_refuel, 0.0) AS avg_spent_per_refuel
+        
     FROM vehicles v
-    LEFT JOIN fuels f2 ON f2.vehicle_id = v.id
-    GROUP BY v.id
+    LEFT JOIN fuel_stats fs ON fs.vehicle_id = v.id
     ORDER BY v.created_at DESC
     """
     )
@@ -98,29 +115,48 @@ interface VehicleDao {
     @Transaction
     @Query(
         """
-    SELECT v.*,
-    COALESCE((SELECT MAX(f.odometer) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS latest_odometer,
-    COALESCE((SELECT AVG(f.fuel_economy) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS average_fuel_economy,
-    COALESCE((SELECT SUM(f.fuel_added) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS total_fuel_added,
-    COALESCE((SELECT SUM(f.total_cost) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS total_spent,
-    COALESCE((SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id), 0) AS refuel_count,
-    COALESCE(
+    WITH fuel_stats AS (
+        SELECT 
+            f.vehicle_id,
+            MAX(f.odometer) AS latest_odometer,
+            AVG(f.fuel_economy) AS average_fuel_economy,
+            SUM(f.fuel_added) AS total_fuel_added,
+            SUM(f.total_cost) AS total_spent,
+            COUNT(*) AS refuel_count,
+            AVG(f.fuel_added) AS avg_liter_refueled,
+            AVG(f.total_cost) AS avg_spent_per_refuel,
+            MIN(f.date) AS first_refuel_date,
+            MAX(f.date) AS last_refuel_date
+        FROM fuels f
+        WHERE f.vehicle_id = :id
+        GROUP BY f.vehicle_id
+    )
+    SELECT 
+        v.*,
+        COALESCE(fs.latest_odometer, 0) AS latest_odometer,
+        COALESCE(fs.average_fuel_economy, 0.0) AS average_fuel_economy,
+        COALESCE(fs.total_fuel_added, 0.0) AS total_fuel_added,
+        COALESCE(fs.total_spent, 0.0) AS total_spent,
+        COALESCE(fs.refuel_count, 0) AS refuel_count,
+        
         CASE
-            WHEN (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) = 0 THEN 0.0
-            ELSE
-                (SELECT COUNT(*) FROM fuels f WHERE f.vehicle_id = v.id) /
-                CASE 
-                    WHEN ((julianday('now') - julianday(datetime(MIN(f2.date) / 1000, 'unixepoch'))) / 30.44) < 1.0 THEN 1.0
-                    ELSE ((julianday('now') - julianday(datetime(MIN(f2.date) / 1000, 'unixepoch'))) / 30.44)
-                END
-        END, 0.0
-    ) AS refuel_per_month,
-    COALESCE((SELECT AVG(f.fuel_added) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS avg_liter_refueled,
-    COALESCE((SELECT AVG(f.total_cost) FROM fuels f WHERE f.vehicle_id = v.id), 0.0) AS avg_spent_per_refuel
+            WHEN fs.refuel_count IS NULL OR fs.refuel_count = 0 THEN 0.0
+            ELSE 
+                CAST(fs.refuel_count AS REAL) /
+                (
+                    (CAST(strftime('%Y', datetime(fs.last_refuel_date / 1000, 'unixepoch')) AS INT) - 
+                     CAST(strftime('%Y', datetime(fs.first_refuel_date / 1000, 'unixepoch')) AS INT)) * 12 +
+                    (CAST(strftime('%m', datetime(fs.last_refuel_date / 1000, 'unixepoch')) AS INT) - 
+                     CAST(strftime('%m', datetime(fs.first_refuel_date / 1000, 'unixepoch')) AS INT)) + 1
+                )
+        END AS refuel_per_month,
+        
+        COALESCE(fs.avg_liter_refueled, 0.0) AS avg_liter_refueled,
+        COALESCE(fs.avg_spent_per_refuel, 0.0) AS avg_spent_per_refuel
+        
     FROM vehicles v
-    LEFT JOIN fuels f2 ON f2.vehicle_id = v.id
+    LEFT JOIN fuel_stats fs ON fs.vehicle_id = v.id
     WHERE v.id = :id
-    GROUP BY v.id
     """
     )
     suspend fun getByIdWithStats(id: String): VehicleWithStats?
