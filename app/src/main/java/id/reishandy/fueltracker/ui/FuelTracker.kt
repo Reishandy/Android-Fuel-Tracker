@@ -226,8 +226,8 @@ fun FuelTracker() {
                         vehicle = vehicleUiState.selectedVehicleWithStats!!.vehicle,
                         fuel = fuelFormUiState.selectedFuel!!,
                         previousOdometer = fuelUiState.fuels
-                            .filter { fuel -> fuel.id < fuelFormUiState.selectedFuel!!.id }
-                            .maxByOrNull { it.id }?.odometer,
+                            .filter { fuel -> fuel.createdAt < fuelFormUiState.selectedFuel!!.createdAt }
+                            .maxByOrNull { it.createdAt }?.odometer,
                         onSuccess = {
                             scope.launch {
                                 fuelViewModel.populateFuels(vehicleUiState.selectedVehicleWithStats!!.vehicle.id)
@@ -242,7 +242,7 @@ fun FuelTracker() {
                     fuelFormViewModel.addFuel(
                         context = context,
                         vehicle = vehicleUiState.selectedVehicleWithStats!!.vehicle,
-                        previousOdometer = fuelUiState.fuels.maxByOrNull { it.id }?.odometer,
+                        previousOdometer = fuelUiState.fuels.maxByOrNull { it.createdAt }?.odometer,
                         onSuccess = {
                             scope.launch {
                                 fuelViewModel.populateFuels(vehicleUiState.selectedVehicleWithStats!!.vehicle.id)
@@ -282,8 +282,8 @@ fun FuelTracker() {
             onCanCalculateTripClick = {
                 fuelFormViewModel.calculateTripFromPreviousOdometer(
                     if (fuelFormUiState.isEdit) fuelUiState.fuels
-                        .filter { fuel -> fuel.id < fuelFormUiState.selectedFuel!!.id }
-                        .maxByOrNull { it.id }?.odometer else fuelUiState.fuels.maxByOrNull { it.id }?.odometer
+                        .filter { fuel -> fuel.createdAt < fuelFormUiState.selectedFuel!!.createdAt }
+                        .maxByOrNull { it.createdAt }?.odometer else fuelUiState.fuels.maxByOrNull { it.createdAt }?.odometer
                 )
             }
         )
