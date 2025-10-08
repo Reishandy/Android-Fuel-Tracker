@@ -30,7 +30,7 @@
     <string name="edit_vehicle">Edit Vehicle</string>
     <string name="delete_confirmation">Delete Confirmation</string>
     <string name="delete">Delete</string>
-        <string name="delete_text">Are you sure you want to delete \"%1$s\" entry? This action cannot be undone.</string>
+    <string name="delete_text">Are you sure you want to delete \"%1$s\" entry? This action cannot be undone.</string>
     <string name="edit">Edit</string>
     <string name="your_vehicles">Your Vehicles</string>
     <string name="vehicle_stats">Vehicle Stats</string>
