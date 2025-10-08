@@ -6,19 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,7 +22,9 @@ import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
-    onProfileClick : () -> Unit = { }
+    onProfileClick: () -> Unit = { },
+    name: String? = null,
+    profilePhotoUrl: String? = null
 ) {
     Card(
         modifier = modifier
@@ -64,21 +60,16 @@ fun HomeHeader(
             Column(
                 modifier = Modifier.clickable { onProfileClick() },
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_extra_small))
             ) {
-                // TODO: Replace with user avatar
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = stringResource(R.string.default_avatar),
-                    modifier = Modifier
-                        .size(dimensionResource(R.dimen.avatar_size_small))
-                        .clip(CircleShape),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                ProfileAvatar(
+                    profilePhotoUrl = profilePhotoUrl,
+                    contentDescription = stringResource(R.string.default_avatar)
                 )
 
-                // TODO: Replace with user name
                 Text(
-                    text = "Log in",
+                    text = name?.trim()?.split(" ")?.firstOrNull()?.takeIf { it.isNotEmpty() }
+                        ?: stringResource(R.string.login),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

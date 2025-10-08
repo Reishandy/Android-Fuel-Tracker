@@ -2,8 +2,10 @@ package id.reishandy.fueltracker.util
 
 import android.content.Context
 import android.widget.Toast
+import java.security.SecureRandom
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.util.Base64
 import java.util.Date
 import java.util.Locale
 
@@ -29,4 +31,10 @@ fun formatNumber(value: Double, maxFractionDigits: Int = 0): String {
 
 fun formatCurrency(value: Double): String {
     return NumberFormat.getCurrencyInstance(Locale.getDefault()).format(value)
+}
+
+fun generateSecureRandomNonce(byteLength: Int = 32): String {
+    val randomBytes = ByteArray(byteLength)
+    SecureRandom().nextBytes(randomBytes)
+    return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes)
 }

@@ -7,12 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -20,12 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.ui.component.LocaleDropdown
+import id.reishandy.fueltracker.ui.component.ProfileAvatar
 import id.reishandy.fueltracker.ui.component.SectionDivider
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 import java.util.Locale
@@ -36,10 +35,13 @@ fun Setting(
     onBackClick: () -> Unit = { },
     onLoginClick: () -> Unit = { },
     onLogoutClick: () -> Unit = { },
-    isLoggedIn: Boolean = true, // TODO: Change this to real authentication state
+    name: String? = null,
+    email: String? = null,
+    profilePhotoUrl: String? = null,
     locales: List<Locale> = listOf(Locale("en"), Locale("id")),
     selectedLocale: Locale = Locale.getDefault(),
-    onLocaleSelected: (Locale) -> Unit = { }
+    onLocaleSelected: (Locale) -> Unit = { },
+    isProcessing: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -68,47 +70,57 @@ fun Setting(
             }
 
             Button(
-                onClick = if (isLoggedIn) onLogoutClick else onLoginClick,
+                onClick = if (email != null) onLogoutClick else onLoginClick,
                 shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors().copy(
-                    containerColor = if (isLoggedIn) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = if (isLoggedIn) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onPrimaryContainer
+                    containerColor = if (email != null) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = if (email != null) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onPrimaryContainer
                 ),
                 elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = dimensionResource(R.dimen.shadow_elevation)
-                )
+                ),
+                enabled = !isProcessing
             ) {
-                Text(text = stringResource(if (isLoggedIn) R.string.logout else R.string.login))
+                if (isProcessing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(dimensionResource(R.dimen.progress_indicator_size)),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                } else {
+                    Text(text = stringResource(if (email != null) R.string.logout else R.string.login))
+                }
             }
         }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = dimensionResource(R.dimen.padding_extra_large)),
+                .padding(bottom = dimensionResource(R.dimen.padding_large)),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
         ) {
-            // TODO: Replace with user avatar
-            Icon(
-                imageVector = Icons.Default.Person,
+            ProfileAvatar(
+                profilePhotoUrl = profilePhotoUrl,
                 contentDescription = stringResource(R.string.default_avatar),
-                modifier = Modifier
-                    .size(dimensionResource(R.dimen.avatar_size_large))
-                    .clip(CircleShape),
+                size = dimensionResource(R.dimen.avatar_size_large)
             )
 
-            // TODO: Replace with user name
-            Text(
-                text = "Muhammad Akbar Reishandy",
-                style = MaterialTheme.typography.titleLarge
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+            ) {
+                Text(
+                    text = name ?: stringResource(R.string.login),
+                    style = MaterialTheme.typography.titleLarge
+                )
 
-            Text(
-                text = "akbar@reishandy.id",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+                Text(
+                    text = email ?: "",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
 
         SectionDivider(title = R.string.settings)

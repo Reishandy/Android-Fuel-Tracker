@@ -39,7 +39,9 @@ fun Home(
     onEditVehicleClick: (Vehicle) -> Unit = { _ -> },
     onDeleteVehicleClick: (Vehicle) -> Unit = { _ -> },
     onVehicleClick: (VehicleWithStats) -> Unit = { _ -> },
-    onProfileClick: () -> Unit = { }
+    onProfileClick: () -> Unit = { },
+    name: String? = null,
+    profilePhotoUrl: String? = null
 ) {
     // TODO: Handle Login
     Box(
@@ -51,7 +53,9 @@ fun Home(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
         ) {
             HomeHeader(
-                onProfileClick = onProfileClick
+                onProfileClick = onProfileClick,
+                name = name,
+                profilePhotoUrl = profilePhotoUrl
             )
 
             SectionDivider(

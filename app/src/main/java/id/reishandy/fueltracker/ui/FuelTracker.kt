@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import id.reishandy.fueltracker.model.AuthViewModel
 import id.reishandy.fueltracker.model.DeleteType
 import id.reishandy.fueltracker.model.DeleteViewModel
 import id.reishandy.fueltracker.model.FuelFormViewModel
@@ -54,6 +55,7 @@ fun FuelTracker() {
     val fuelFormViewModel: FuelFormViewModel = hiltViewModel()
     val deleteViewModel: DeleteViewModel = hiltViewModel()
     val settingViewModel: SettingViewModel = hiltViewModel()
+    val authViewModel: AuthViewModel = hiltViewModel()
 
     val vehicleUiState by vehicleViewModel.uiState.collectAsState()
     val vehicleFormUiState by vehicleFormViewModel.uiState.collectAsState()
@@ -61,6 +63,7 @@ fun FuelTracker() {
     val fuelFormUiState by fuelFormViewModel.uiState.collectAsState()
     val deleteUiState by deleteViewModel.uiState.collectAsState()
     val settingUiState by settingViewModel.uiState.collectAsState()
+    val authUiState by authViewModel.uiState.collectAsState()
 
     val vehicleSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -101,7 +104,9 @@ fun FuelTracker() {
                     },
                     onProfileClick = {
                         navController.navigate(FuelTrackerNav.SETTING.name)
-                    }
+                    },
+                    name = authUiState.name,
+                    profilePhotoUrl = authUiState.photoUrl
                 )
             }
 
@@ -146,13 +151,27 @@ fun FuelTracker() {
                     onBackClick = {
                         navController.popBackStack()
                     },
-                    onLoginClick = { /* TODO: Implement login */ },
-                    onLogoutClick = { /* TODO: Implement logout */ },
+                    onLoginClick = {
+                        authViewModel.signInWithGoogle(
+                            context = context,
+                            request = authViewModel.createSignInRequest(
+                                authViewModel.createGoogleSignInOption(false)
+                            )
+                        )
+                    },
+                    onLogoutClick = {
+                        authViewModel.signOut(context)
+                        navController.popBackStack(FuelTrackerNav.HOME.name, false)
+                    },
                     locales = settingUiState.locales,
                     selectedLocale = settingUiState.selectedLocale,
                     onLocaleSelected = { locale ->
                         settingViewModel.updateSelectedLocale(locale, context as? Activity)
-                    }
+                    },
+                    name = authUiState.name,
+                    email = authUiState.email,
+                    profilePhotoUrl = authUiState.photoUrl,
+                    isProcessing = authUiState.isProcessing,
                 )
             }
         }
@@ -357,8 +376,8 @@ fun FuelTracker() {
 
 // TODO: Features and stuff
 //  - Verify date picker fix
-//  - Google login
 //  - Backup and restore (google drive?)
 //  - Sync every CRUD or db update
+//  - Remove db when logout and restore when login
 //  - Animations
 //  - Custom splash screen
