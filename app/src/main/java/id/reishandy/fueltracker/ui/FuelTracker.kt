@@ -356,7 +356,7 @@ fun FuelTracker() {
 }
 
 // TODO: Features and stuff
-//  - Fix date picker not able to select current date
+//  - Verify date picker fix
 //  - Google login
 //  - Backup and restore (google drive?)
 //  - Sync every CRUD or db update
