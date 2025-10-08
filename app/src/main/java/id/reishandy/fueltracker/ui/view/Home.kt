@@ -1,5 +1,14 @@
 package id.reishandy.fueltracker.ui.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,7 +17,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -17,8 +27,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -41,9 +57,35 @@ fun Home(
     onVehicleClick: (VehicleWithStats) -> Unit = { _ -> },
     onProfileClick: () -> Unit = { },
     name: String? = null,
-    profilePhotoUrl: String? = null
+    profilePhotoUrl: String? = null,
+    shouldExit: Boolean = false
 ) {
-    // TODO: Handle Login
+    var isHeaderVisible by remember { mutableStateOf(false) }
+    var areItemsVisible by remember { mutableStateOf(false) }
+
+    val lazyListState = rememberLazyListState()
+
+    LaunchedEffect(shouldExit) {
+        if (shouldExit) {
+            areItemsVisible = false
+            kotlinx.coroutines.delay(300)
+            isHeaderVisible = false
+        } else {
+            isHeaderVisible = true
+            kotlinx.coroutines.delay(300)
+            areItemsVisible = true
+        }
+    }
+
+    val fabScale by animateFloatAsState(
+        targetValue = if (areItemsVisible && !shouldExit) 1f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "fab_scale"
+    )
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -52,40 +94,118 @@ fun Home(
         Column(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
         ) {
-            HomeHeader(
-                onProfileClick = onProfileClick,
-                name = name,
-                profilePhotoUrl = profilePhotoUrl
-            )
+            AnimatedVisibility(
+                visible = isHeaderVisible && !shouldExit,
+                enter = slideInVertically(
+                    initialOffsetY = { -it },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeIn(
+                    animationSpec = tween(durationMillis = 600)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { -it },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeOut(
+                    animationSpec = tween(durationMillis = 400)
+                )
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+                ) {
+                    HomeHeader(
+                        onProfileClick = onProfileClick,
+                        name = name,
+                        profilePhotoUrl = profilePhotoUrl
+                    )
 
-            SectionDivider(
-                title = R.string.your_vehicles
-            )
+                    SectionDivider(
+                        title = R.string.your_vehicles
+                    )
+                }
+            }
 
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                state = lazyListState
             ) {
                 if (vehiclesWithStats.isNotEmpty()) {
-                    items(vehiclesWithStats) { vehicleWithStats ->
-                        VehicleItem(
-                            vehicleWithStats = vehicleWithStats,
-                            onClick = { onVehicleClick(vehicleWithStats) },
-                            onEditClick = onEditVehicleClick,
-                            onDeleteClick = onDeleteVehicleClick
-                        )
+                    itemsIndexed(
+                        items = vehiclesWithStats,
+                        key = { _, it -> it.vehicle.id }) { index, vehicleWithStats ->
+                        val delay = index * 100
+                        val reverseDelay = (vehiclesWithStats.size - 1 - index) * 80
+
+                        AnimatedVisibility(
+                            visible = areItemsVisible && !shouldExit,
+                            enter = slideInVertically(
+                                initialOffsetY = { it / 2 },
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            ) + fadeIn(
+                                animationSpec = tween(durationMillis = 600, delayMillis = delay)
+                            ),
+                            exit = slideOutVertically(
+                                targetOffsetY = { it / 2 },
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            ) + fadeOut(
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    delayMillis = reverseDelay
+                                )
+                            )
+                        ) {
+                            VehicleItem(
+                                vehicleWithStats = vehicleWithStats,
+                                onClick = { onVehicleClick(vehicleWithStats) },
+                                onEditClick = onEditVehicleClick,
+                                onDeleteClick = onDeleteVehicleClick
+                            )
+                        }
                     }
                 } else {
                     item {
-                        Text(
-                            text = stringResource(R.string.nothing_to_see_here),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
+                        AnimatedVisibility(
+                            visible = areItemsVisible && !shouldExit,
+                            enter = fadeIn(
+                                animationSpec = tween(durationMillis = 800, delayMillis = 300)
+                            ) + slideInVertically(
+                                initialOffsetY = { it / 2 },
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            ),
+                            exit = slideOutVertically(
+                                targetOffsetY = { it / 2 },
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            ) + fadeOut(
+                                animationSpec = tween(durationMillis = 400)
+                            )
+                        ) {
+                            Text(
+                                text = stringResource(R.string.nothing_to_see_here),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
-
                 }
 
                 item {
@@ -102,7 +222,8 @@ fun Home(
             onClick = onAddVehicleClick,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(dimensionResource(R.dimen.padding_small)),
+                .padding(dimensionResource(R.dimen.padding_small))
+                .scale(fabScale),
             icon = {
                 Icon(
                     imageVector = Icons.Default.Add,

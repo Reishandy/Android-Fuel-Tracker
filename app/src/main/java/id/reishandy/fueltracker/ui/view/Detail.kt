@@ -1,5 +1,14 @@
 package id.reishandy.fueltracker.ui.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -17,10 +27,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -63,9 +77,40 @@ fun Detail(
     fuels: List<Fuel> = emptyList(),
     onAddFuelClick: () -> Unit = { },
     onFuelEditClick: (Fuel) -> Unit = { _ -> },
-    onFuelDeleteClick: (Fuel) -> Unit = { _ -> }
+    onFuelDeleteClick: (Fuel) -> Unit = { _ -> },
+    shouldExit: Boolean = false
 ) {
+    var isHeaderVisible by remember { mutableStateOf(false) }
+    var areStatsVisible by remember { mutableStateOf(false) }
+    var areItemsVisible by remember { mutableStateOf(false) }
     val expandedFuelIds = remember { mutableStateOf(setOf<Long>()) }
+
+    LaunchedEffect(Unit) {
+        isHeaderVisible = true
+        kotlinx.coroutines.delay(200)
+        areStatsVisible = true
+        kotlinx.coroutines.delay(400)
+        areItemsVisible = true
+    }
+
+    LaunchedEffect(shouldExit) {
+        if (shouldExit) {
+            areItemsVisible = false
+            kotlinx.coroutines.delay(100)
+            areStatsVisible = false
+            kotlinx.coroutines.delay(200)
+            isHeaderVisible = false
+        }
+    }
+
+    val fabScale by animateFloatAsState(
+        targetValue = if (areItemsVisible && !shouldExit) 1f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "fab_scale"
+    )
 
     Box(
         modifier = modifier
@@ -75,61 +120,156 @@ fun Detail(
         Column(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
         ) {
-            DetailTopButtons(
-                onBackClick = onBackClick,
-                onEditClick = onEditClick,
-                onDeleteClick = onDeleteClick
-            )
+            AnimatedVisibility(
+                visible = isHeaderVisible && !shouldExit,
+                enter = slideInVertically(
+                    initialOffsetY = { -it },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeIn(
+                    animationSpec = tween(durationMillis = 600)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { -it },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeOut(
+                    animationSpec = tween(durationMillis = 400)
+                )
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+                ) {
+                    DetailTopButtons(
+                        onBackClick = onBackClick,
+                        onEditClick = onEditClick,
+                        onDeleteClick = onDeleteClick
+                    )
 
-            DetailHeader(
-                vehicleWithStats = vehicleWithStats
-            )
+                    DetailHeader(
+                        vehicleWithStats = vehicleWithStats
+                    )
+                }
+            }
+
+            AnimatedVisibility(
+                visible = areStatsVisible && !shouldExit,
+                enter = slideInVertically(
+                    initialOffsetY = { it / 2 },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeIn(
+                    animationSpec = tween(durationMillis = 600, delayMillis = 100)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { it / 2 },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeOut(
+                    animationSpec = tween(durationMillis = 400)
+                )
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+                ) {
+                    SectionDivider(title = R.string.vehicle_stats)
+
+                    DetailStats(
+                        vehicleWithStats = vehicleWithStats
+                    )
+
+                    SectionDivider(title = R.string.refuel_history)
+                }
+            }
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
             ) {
-                item {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
-                    ) {
-                        SectionDivider(title = R.string.vehicle_stats)
-
-                        DetailStats(
-                            vehicleWithStats = vehicleWithStats
-                        )
-
-                        SectionDivider(title = R.string.refuel_history)
-                    }
-                }
-
                 if (fuels.isNotEmpty()) {
-                    items(fuels) { fuel ->
-                        FuelItem(
-                            fuel = fuel,
-                            onEditClick = { onFuelEditClick(fuel) },
-                            onDeleteClick = { onFuelDeleteClick(fuel) },
-                            expanded = expandedFuelIds.value.contains(fuel.id),
-                            onExpandedChange = { isExpanded ->
-                                expandedFuelIds.value = if (isExpanded) {
-                                    expandedFuelIds.value + fuel.id
-                                } else {
-                                    expandedFuelIds.value - fuel.id
+                    itemsIndexed(fuels) { index, fuel ->
+                        val delay = index * 100
+                        val reverseDelay = (fuels.size - 1 - index) * 80
+
+                        AnimatedVisibility(
+                            visible = areItemsVisible && !shouldExit,
+                            enter = slideInVertically(
+                                initialOffsetY = { it / 2 },
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            ) + fadeIn(
+                                animationSpec = tween(durationMillis = 600, delayMillis = delay)
+                            ),
+                            exit = slideOutVertically(
+                                targetOffsetY = { it / 2 },
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            ) + fadeOut(
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    delayMillis = reverseDelay
+                                )
+                            )
+                        ) {
+                            FuelItem(
+                                fuel = fuel,
+                                onEditClick = { onFuelEditClick(fuel) },
+                                onDeleteClick = { onFuelDeleteClick(fuel) },
+                                expanded = expandedFuelIds.value.contains(fuel.id),
+                                onExpandedChange = { isExpanded ->
+                                    expandedFuelIds.value = if (isExpanded) {
+                                        expandedFuelIds.value + fuel.id
+                                    } else {
+                                        expandedFuelIds.value - fuel.id
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 } else {
                     item {
-                        Text(
-                            text = stringResource(R.string.nothing_to_see_here),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
+                        AnimatedVisibility(
+                            visible = areItemsVisible && !shouldExit,
+                            enter = fadeIn(
+                                animationSpec = tween(durationMillis = 800, delayMillis = 300)
+                            ) + slideInVertically(
+                                initialOffsetY = { it / 2 },
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            ),
+                            exit = slideOutVertically(
+                                targetOffsetY = { it / 2 },
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            ) + fadeOut(
+                                animationSpec = tween(durationMillis = 400)
+                            )
+                        ) {
+                            Text(
+                                text = stringResource(R.string.nothing_to_see_here),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
-
                 }
 
                 item {
@@ -146,7 +286,8 @@ fun Detail(
             onClick = onAddFuelClick,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(dimensionResource(R.dimen.padding_small)),
+                .padding(dimensionResource(R.dimen.padding_small))
+                .scale(fabScale),
             icon = {
                 Icon(
                     imageVector = Icons.Default.Add,

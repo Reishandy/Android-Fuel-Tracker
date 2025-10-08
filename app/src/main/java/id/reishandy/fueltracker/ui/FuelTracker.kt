@@ -10,7 +10,10 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -82,6 +85,8 @@ fun FuelTracker() {
             modifier = Modifier.statusBarsPadding()
         ) {
             composable(route = FuelTrackerNav.HOME.name) {
+                var shouldExit by remember { mutableStateOf(false) }
+
                 Home(
                     vehiclesWithStats = vehicleUiState.vehiclesWithStats,
                     onAddVehicleClick = {
@@ -91,22 +96,26 @@ fun FuelTracker() {
                         vehicleFormViewModel.setupEdit(vehicle)
                         vehicleFormViewModel.showSheet()
                     },
-                    onDeleteVehicleClick = { vehicle ->
-                        deleteViewModel.updateSelectedVehicle(vehicle)
-                        deleteViewModel.setDeleteType(DeleteType.VEHICLE)
-                        deleteViewModel.showSheet()
-                    },
                     onVehicleClick = { vehicleWithStats ->
-                        fuelFormViewModel.clearEdit()
-                        vehicleViewModel.updateSelectedVehicleWithStats(vehicleWithStats)
-                        fuelViewModel.populateFuels(vehicleWithStats.vehicle.id)
-                        navController.navigate(FuelTrackerNav.VEHICLE_DETAIL.name)
+                        shouldExit = true
+                        scope.launch {
+                            kotlinx.coroutines.delay(300)
+                            fuelFormViewModel.clearEdit()
+                            vehicleViewModel.updateSelectedVehicleWithStats(vehicleWithStats)
+                            fuelViewModel.populateFuels(vehicleWithStats.vehicle.id)
+                            navController.navigate(FuelTrackerNav.VEHICLE_DETAIL.name)
+                        }
                     },
                     onProfileClick = {
-                        navController.navigate(FuelTrackerNav.SETTING.name)
+                        shouldExit = true
+                        scope.launch {
+                            kotlinx.coroutines.delay(300)
+                            navController.navigate(FuelTrackerNav.SETTING.name)
+                        }
                     },
                     name = authUiState.name,
-                    profilePhotoUrl = authUiState.photoUrl
+                    profilePhotoUrl = authUiState.photoUrl,
+                    shouldExit = shouldExit,
                 )
             }
 
@@ -115,10 +124,15 @@ fun FuelTracker() {
                     navController.popBackStack()
                     showToast(context, "Selected vehicle not found, should not be possible", true)
                 }
+                var shouldExit by remember { mutableStateOf(false) }
 
                 Detail(
                     onBackClick = {
-                        navController.popBackStack()
+                        shouldExit = true
+                        scope.launch {
+                            kotlinx.coroutines.delay(300)
+                            navController.popBackStack()
+                        }
                     },
                     onEditClick = {
                         vehicleFormViewModel.setupEdit(vehicleUiState.selectedVehicleWithStats!!.vehicle)
@@ -142,14 +156,21 @@ fun FuelTracker() {
                         deleteViewModel.updateSelectedFuel(fuel)
                         deleteViewModel.setDeleteType(DeleteType.FUEL)
                         deleteViewModel.showSheet()
-                    }
+                    },
+                    shouldExit = shouldExit
                 )
             }
 
             composable(route = FuelTrackerNav.SETTING.name) {
+                var shouldExit by remember { mutableStateOf(false) }
+
                 Setting(
                     onBackClick = {
-                        navController.popBackStack()
+                        shouldExit = true
+                        scope.launch {
+                            kotlinx.coroutines.delay(300)
+                            navController.popBackStack()
+                        }
                     },
                     onLoginClick = {
                         authViewModel.signInWithGoogle(
@@ -172,6 +193,7 @@ fun FuelTracker() {
                     email = authUiState.email,
                     profilePhotoUrl = authUiState.photoUrl,
                     isProcessing = authUiState.isProcessing,
+                    shouldExit = shouldExit
                 )
             }
         }
