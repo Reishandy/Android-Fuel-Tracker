@@ -92,7 +92,7 @@ class AuthViewModel @Inject constructor(
         if (credential.type == com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
             try {
                 val googleIdTokenCredential = com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.createFrom(credential.data)
-                val idToken = googleIdTokenCredential.idToken // TODO: Check
+                val idToken = googleIdTokenCredential.idToken
 
                 val name = googleIdTokenCredential.displayName
                 val email = googleIdTokenCredential.id

@@ -172,7 +172,6 @@ fun FuelFormBottomSheet(
                         shape = MaterialTheme.shapes.small
                     )
 
-                    // TODO: Checkbox calculate trip from previous odometer
                     Row {
                         TextField(
                             value = tripValue,

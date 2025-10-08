@@ -407,5 +407,5 @@ fun FuelTracker() {
 
 // TODO: Features and stuff
 //  - Verify date picker fix
-//  - Sync every CRUD or db update
-//  - Custom splash screen
+//  - README.md add and screenshots
+//  - Export to XLSX?

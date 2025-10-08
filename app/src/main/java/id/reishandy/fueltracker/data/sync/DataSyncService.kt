@@ -63,6 +63,8 @@ class DataSyncService @Inject constructor(
         }
     }
 
+    // INFO: This is not an optimal sync strategy for large datasets. It works well for small datasets typical of personal apps.
+    // For larger datasets, consider more sophisticated strategies like change tracking, timestamps, or versioning.
     suspend fun backupToCloud() {
         val userId = Firebase.auth.currentUser?.uid
             ?: throw IllegalStateException("User not signed in")
