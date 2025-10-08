@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "543313518417",
+    "project_id": "fuel-tracker-2e938",
+    "storage_bucket": "fuel-tracker-2e938.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:543313518417:android:a9874357bee594f22d3d70",
+        "android_client_info": {
+          "package_name": "id.reishandy.fueltracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "543313518417-gtppg0c4fp0rosj85osnrttk45rcn291.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "id.reishandy.fueltracker",
+            "certificate_hash": "fbba6671a4360c762eeccee6e8255dd365b4ac5b"
+          }
+        },
+        {
+          "client_id": "543313518417-m4ah0v3ilpssutah475lrbuj1lgim7nq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqDD-6HfgFt7CMnl0Y-Tbq6C9Rf94uoDg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "543313518417-m4ah0v3ilpssutah475lrbuj1lgim7nq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

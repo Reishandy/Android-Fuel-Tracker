@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.firebase)
+    alias(libs.plugins.kotlin.noarg)
 }
 
 android {
@@ -18,7 +20,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "GOOGLE_CLIENT_ID", "\"387851072403-2vubms0h3a3d453pk6qqd9999kbci930.apps.googleusercontent.com\"")
+        buildConfigField("String", "GOOGLE_CLIENT_ID", "\"543313518417-m4ah0v3ilpssutah475lrbuj1lgim7nq.apps.googleusercontent.com\"")
     }
 
     buildTypes {
@@ -66,6 +68,9 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.coil.compose)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,4 +78,8 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+noArg {
+    annotation("com.google.firebase.firestore.IgnoreExtraProperties")
 }

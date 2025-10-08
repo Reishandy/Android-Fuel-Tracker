@@ -57,7 +57,7 @@ fun Setting(
     selectedLocale: Locale = Locale.getDefault(),
     onLocaleSelected: (Locale) -> Unit = { },
     isProcessing: Boolean = false,
-    shouldExit: Boolean = false
+    shouldExit: Boolean = false,
 ) {
     var isHeaderVisible by remember { mutableStateOf(false) }
     var isProfileVisible by remember { mutableStateOf(false) }

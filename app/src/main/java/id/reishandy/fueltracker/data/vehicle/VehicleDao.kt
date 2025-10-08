@@ -123,4 +123,13 @@ interface VehicleDao {
     """
     )
     suspend fun getByIdWithStats(id: Long): VehicleWithStats?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(vehicles: List<Vehicle>)
+
+    @Query("DELETE FROM vehicles")
+    suspend fun deleteAll()
+
+    @Query("SELECT * FROM vehicles")
+    suspend fun getAllSnapshot(): List<Vehicle>
 }

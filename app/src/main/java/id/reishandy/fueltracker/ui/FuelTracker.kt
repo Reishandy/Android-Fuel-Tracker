@@ -198,7 +198,7 @@ fun FuelTracker() {
                     email = authUiState.email,
                     profilePhotoUrl = authUiState.photoUrl,
                     isProcessing = authUiState.isProcessing,
-                    shouldExit = shouldExit
+                    shouldExit = shouldExit,
                 )
             }
         }
@@ -402,9 +402,7 @@ fun FuelTracker() {
 }
 
 // TODO: Features and stuff
+//  - change db id to UUID for firebase sync
 //  - Verify date picker fix
-//  - Backup and restore (google drive?)
 //  - Sync every CRUD or db update
-//  - Remove db when logout and restore when login
-//  - Animations
 //  - Custom splash screen

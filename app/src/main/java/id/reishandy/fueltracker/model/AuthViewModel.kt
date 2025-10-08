@@ -8,6 +8,9 @@ import androidx.credentials.GetCredentialResponse
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.firebase.Firebase
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import id.reishandy.fueltracker.data.FuelTrackerAppDatabase
 import id.reishandy.fueltracker.data.FuelTrackerPreferenceManager
@@ -21,6 +24,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import id.reishandy.fueltracker.BuildConfig
+import id.reishandy.fueltracker.data.sync.DataSyncService
+import id.reishandy.fueltracker.data.sync.SyncObserver
 
 data class AuthState(
     val name: String? = null,
@@ -33,7 +38,9 @@ data class AuthState(
 class AuthViewModel @Inject constructor(
     private val credentialManager: CredentialManager,
     private val preferenceManager: FuelTrackerPreferenceManager,
-    private val fuelTrackerAppDatabase: FuelTrackerAppDatabase
+    private val fuelTrackerAppDatabase: FuelTrackerAppDatabase,
+    private val dataSyncService: DataSyncService,
+    private val syncObserver: SyncObserver
 ): ViewModel() {
     private val _uiState = MutableStateFlow(AuthState())
     val uiState: StateFlow<AuthState> = _uiState.asStateFlow()
@@ -87,6 +94,7 @@ class AuthViewModel @Inject constructor(
         if (credential.type == com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
             try {
                 val googleIdTokenCredential = com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.createFrom(credential.data)
+                val idToken = googleIdTokenCredential.idToken // TODO: Check
 
                 val name = googleIdTokenCredential.displayName
                 val email = googleIdTokenCredential.id
@@ -97,8 +105,18 @@ class AuthViewModel @Inject constructor(
                 preferenceManager.saveUser(name, email, photo)
                 _uiState.value = AuthState(name, email, photo)
 
-                // TODO: Sync db from drive
-                // TODO: Remove local db if there is data from drive if not then keep local db
+                val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+                Firebase.auth.signInWithCredential(firebaseCredential)
+                    .addOnSuccessListener { authResult ->
+                        viewModelScope.launch {
+                            // On success, sync data from cloud
+                            onFirebaseSignInSuccess(context)
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.e("AuthViewModel", "Firebase sign-in failed", exception)
+                        showToast(context, "Sync failed: ${exception.message}", true)
+                    }
 
                 showToast(context, "Welcome $name", false)
             } catch (e: Exception) {
@@ -154,8 +172,12 @@ class AuthViewModel @Inject constructor(
                     // Clear user data from preferences
                     _uiState.value = AuthState()
                     preferenceManager.clearUser()
+                    // Stop sync observer
+                    syncObserver.stopSyncing()
                     // Clear local database
                     fuelTrackerAppDatabase.clearAllTables()
+                    // Sign out from Firebase
+                    Firebase.auth.signOut()
                 }
 
                 showToast(context, "Signed out")
@@ -164,6 +186,31 @@ class AuthViewModel @Inject constructor(
                 Log.e("AuthViewModel", "Sign-out failed", ex)
             } finally {
                 setProcessing(false)
+            }
+        }
+    }
+
+    private fun onFirebaseSignInSuccess(context: Context) {
+        viewModelScope.launch {
+            try {
+                dataSyncService.syncFromCloud() // Restore from cloud
+                syncObserver.startSyncing()
+                showToast(context, "Data restored from cloud", false)
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Sync failed", e)
+                showToast(context, "Sync failed: ${e.message}", true)
+            }
+        }
+    }
+
+    fun backupToCloud(context: Context) {
+        viewModelScope.launch {
+            try {
+                dataSyncService.backupToCloud()
+                showToast(context, "Backup successful", false)
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Backup failed", e)
+                showToast(context, "Backup failed", true)
             }
         }
     }

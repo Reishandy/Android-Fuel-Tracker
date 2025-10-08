@@ -5,8 +5,10 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.google.firebase.firestore.IgnoreExtraProperties
 import id.reishandy.fueltracker.data.vehicle.Vehicle
 
+@IgnoreExtraProperties
 @Entity(
     tableName = "fuels",
     foreignKeys = [

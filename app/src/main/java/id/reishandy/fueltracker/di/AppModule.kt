@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.credentials.CredentialManager
 import androidx.room.Room
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,6 +16,8 @@ import dagger.hilt.components.SingletonComponent
 import id.reishandy.fueltracker.data.FuelTrackerAppDatabase
 import id.reishandy.fueltracker.data.fuel.FuelDao
 import id.reishandy.fueltracker.data.fuel.FuelRepository
+import id.reishandy.fueltracker.data.sync.DataSyncService
+import id.reishandy.fueltracker.data.sync.SyncObserver
 import id.reishandy.fueltracker.data.vehicle.VehicleDao
 import id.reishandy.fueltracker.data.vehicle.VehicleRepository
 import javax.inject.Singleton
@@ -52,5 +58,23 @@ object AppModule {
     @Singleton
     fun provideCredentialManager(@ApplicationContext context: Context): CredentialManager {
         return CredentialManager.create(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
+
+    @Provides
+    @Singleton
+    fun provideSyncObserver(
+        vehicleDao: VehicleDao,
+        fuelDao: FuelDao,
+        dataSyncService: DataSyncService
+    ): SyncObserver {
+        return SyncObserver(vehicleDao, fuelDao, dataSyncService)
     }
 }

@@ -27,4 +27,13 @@ interface FuelDao {
 
     @Query("SELECT * FROM fuels WHERE vehicle_id = :vehicleId ORDER BY date DESC")
     fun getByVehicleId(vehicleId: Long): Flow<List<Fuel>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(fuels: List<Fuel>)
+
+    @Query("DELETE FROM fuels")
+    suspend fun deleteAll()
+
+    @Query("SELECT * FROM fuels ORDER BY date DESC")
+    suspend fun getAllSnapshot(): List<Fuel>
 }
