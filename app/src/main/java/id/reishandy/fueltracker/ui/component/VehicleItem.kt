@@ -128,7 +128,9 @@ fun VehicleItem(
                         R.string.km_abbr_value,
                         formatNumber(vehicleWithStats.latestOdometer.toDouble())
                     ),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.MiddleEllipsis
                 )
 
                 Text(

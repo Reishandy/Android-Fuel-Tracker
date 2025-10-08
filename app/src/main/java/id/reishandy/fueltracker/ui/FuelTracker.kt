@@ -96,6 +96,11 @@ fun FuelTracker() {
                         vehicleFormViewModel.setupEdit(vehicle)
                         vehicleFormViewModel.showSheet()
                     },
+                    onDeleteVehicleClick = { vehicle ->
+                        deleteViewModel.setIsOnDetails(false)
+                        deleteViewModel.updateSelectedVehicle(vehicle)
+                        deleteViewModel.showSheet()
+                    },
                     onVehicleClick = { vehicleWithStats ->
                         shouldExit = true
                         scope.launch {

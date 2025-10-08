@@ -1,5 +1,14 @@
 package id.reishandy.fueltracker.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -77,7 +86,13 @@ fun FuelItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.padding_medium)),
+                .padding(dimensionResource(R.dimen.padding_medium))
+                .animateContentSize(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    )
+                ),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
         ) {
             Row(
@@ -103,7 +118,10 @@ fun FuelItem(
                 }
 
                 Text(
-                    text = stringResource(R.string.remain_liter_value, formatNumber(fuel.fuelRemaining, 1)),
+                    text = stringResource(
+                        R.string.remain_liter_value,
+                        formatNumber(fuel.fuelRemaining, 1)
+                    ),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -307,7 +325,6 @@ fun FuelItem(
                 )
             }
         }
-
     }
 }
 
@@ -315,21 +332,50 @@ fun FuelItem(
 @Composable
 internal fun PreviewFuelItem() {
     FuelTrackerTheme(darkTheme = true) {
-        FuelItem(
-            fuel = Fuel(
-                id = 1,
-                vehicleId = 1,
-                date = 1705324800000,
-                odometer = 15000,
-                trip = 250,
-                fuelAdded = 5.0,
-                fuelType = "Pertalite",
-                pricePerLiter = 10_000.0,
-                totalCost = 50_000.0,
-                fuelEconomy = 50.0,
-                costPerKm = 200.0,
-                fuelRemaining = 3.0
+        Column(
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+        ) {
+            var expanded1 by remember { mutableStateOf(false) }
+            var expanded2 by remember { mutableStateOf(true) }
+
+            FuelItem(
+                fuel = Fuel(
+                    id = 1,
+                    vehicleId = 1,
+                    date = 1705324800000,
+                    odometer = 15000,
+                    trip = 250,
+                    fuelAdded = 5.0,
+                    fuelType = "Pertalite",
+                    pricePerLiter = 10_000.0,
+                    totalCost = 50_000.0,
+                    fuelEconomy = 50.0,
+                    costPerKm = 200.0,
+                    fuelRemaining = 3.0
+                ),
+                expanded = expanded1,
+                onExpandedChange = { expanded1 = it }
             )
-        )
+
+            FuelItem(
+                fuel = Fuel(
+                    id = 2,
+                    vehicleId = 1,
+                    date = 1705238400000,
+                    odometer = 14750,
+                    trip = 230,
+                    fuelAdded = 4.6,
+                    fuelType = "Pertamax",
+                    pricePerLiter = 12_000.0,
+                    totalCost = 55_200.0,
+                    fuelEconomy = 48.7,
+                    costPerKm = 240.0,
+                    fuelRemaining = 2.5
+                ),
+                expanded = expanded2,
+                onExpandedChange = { expanded2 = it }
+            )
+        }
     }
 }

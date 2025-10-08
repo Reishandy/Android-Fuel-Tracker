@@ -84,7 +84,7 @@ fun Setting(
     val buttonScale by animateFloatAsState(
         targetValue = if (isHeaderVisible && !shouldExit) 1f else 0f,
         animationSpec = spring(
-            dampingRatio = Spring.DampingRatioNoBouncy,
+            dampingRatio = Spring.DampingRatioLowBouncy,
             stiffness = Spring.StiffnessMedium
         ),
         label = "button_scale"
@@ -100,7 +100,7 @@ fun Setting(
             enter = slideInVertically(
                 initialOffsetY = { -it },
                 animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    dampingRatio = Spring.DampingRatioLowBouncy,
                     stiffness = Spring.StiffnessLow
                 )
             ) + fadeIn(
@@ -109,7 +109,7 @@ fun Setting(
             exit = slideOutVertically(
                 targetOffsetY = { -it },
                 animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    dampingRatio = Spring.DampingRatioLowBouncy,
                     stiffness = Spring.StiffnessLow
                 )
             ) + fadeOut(
@@ -169,7 +169,7 @@ fun Setting(
             enter = slideInVertically(
                 initialOffsetY = { it / 2 },
                 animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    dampingRatio = Spring.DampingRatioLowBouncy,
                     stiffness = Spring.StiffnessLow
                 )
             ) + fadeIn(
@@ -178,7 +178,7 @@ fun Setting(
             exit = slideOutVertically(
                 targetOffsetY = { it / 2 },
                 animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    dampingRatio = Spring.DampingRatioLowBouncy,
                     stiffness = Spring.StiffnessLow
                 )
             ) + fadeOut(
@@ -221,7 +221,7 @@ fun Setting(
             enter = slideInVertically(
                 initialOffsetY = { it / 2 },
                 animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    dampingRatio = Spring.DampingRatioLowBouncy,
                     stiffness = Spring.StiffnessLow
                 )
             ) + fadeIn(
@@ -230,7 +230,7 @@ fun Setting(
             exit = slideOutVertically(
                 targetOffsetY = { it / 2 },
                 animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    dampingRatio = Spring.DampingRatioLowBouncy,
                     stiffness = Spring.StiffnessLow
                 )
             ) + fadeOut(

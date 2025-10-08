@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -85,6 +85,8 @@ fun Detail(
     var areItemsVisible by remember { mutableStateOf(false) }
     val expandedFuelIds = remember { mutableStateOf(setOf<Long>()) }
 
+    val lazyListState = rememberLazyListState()
+
     LaunchedEffect(Unit) {
         isHeaderVisible = true
         kotlinx.coroutines.delay(200)
@@ -106,7 +108,7 @@ fun Detail(
     val fabScale by animateFloatAsState(
         targetValue = if (areItemsVisible && !shouldExit) 1f else 0f,
         animationSpec = spring(
-            dampingRatio = Spring.DampingRatioNoBouncy,
+            dampingRatio = Spring.DampingRatioLowBouncy,
             stiffness = Spring.StiffnessMedium
         ),
         label = "fab_scale"
@@ -125,7 +127,7 @@ fun Detail(
                 enter = slideInVertically(
                     initialOffsetY = { -it },
                     animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        dampingRatio = Spring.DampingRatioLowBouncy,
                         stiffness = Spring.StiffnessLow
                     )
                 ) + fadeIn(
@@ -134,7 +136,7 @@ fun Detail(
                 exit = slideOutVertically(
                     targetOffsetY = { -it },
                     animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        dampingRatio = Spring.DampingRatioLowBouncy,
                         stiffness = Spring.StiffnessLow
                     )
                 ) + fadeOut(
@@ -161,7 +163,7 @@ fun Detail(
                 enter = slideInVertically(
                     initialOffsetY = { it / 2 },
                     animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        dampingRatio = Spring.DampingRatioLowBouncy,
                         stiffness = Spring.StiffnessLow
                     )
                 ) + fadeIn(
@@ -170,7 +172,7 @@ fun Detail(
                 exit = slideOutVertically(
                     targetOffsetY = { it / 2 },
                     animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        dampingRatio = Spring.DampingRatioLowBouncy,
                         stiffness = Spring.StiffnessLow
                     )
                 ) + fadeOut(
@@ -190,94 +192,72 @@ fun Detail(
                 }
             }
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+            AnimatedVisibility(
+                visible = areItemsVisible && !shouldExit,
+                enter = slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeIn(
+                    animationSpec = tween(durationMillis = 600)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeOut(
+                    animationSpec = tween(durationMillis = 400)
+                )
             ) {
-                if (fuels.isNotEmpty()) {
-                    itemsIndexed(fuels) { index, fuel ->
-                        val delay = index * 100
-                        val reverseDelay = (fuels.size - 1 - index) * 80
-
-                        AnimatedVisibility(
-                            visible = areItemsVisible && !shouldExit,
-                            enter = slideInVertically(
-                                initialOffsetY = { it / 2 },
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            ) + fadeIn(
-                                animationSpec = tween(durationMillis = 600, delayMillis = delay)
-                            ),
-                            exit = slideOutVertically(
-                                targetOffsetY = { it / 2 },
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            ) + fadeOut(
-                                animationSpec = tween(
-                                    durationMillis = 400,
-                                    delayMillis = reverseDelay
-                                )
-                            )
-                        ) {
-                            FuelItem(
-                                fuel = fuel,
-                                onEditClick = { onFuelEditClick(fuel) },
-                                onDeleteClick = { onFuelDeleteClick(fuel) },
-                                expanded = expandedFuelIds.value.contains(fuel.id),
-                                onExpandedChange = { isExpanded ->
-                                    expandedFuelIds.value = if (isExpanded) {
-                                        expandedFuelIds.value + fuel.id
-                                    } else {
-                                        expandedFuelIds.value - fuel.id
-                                    }
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                    state = lazyListState
+                ) {
+                    items(
+                        items = fuels,
+                        key = { it.id }
+                    ) { fuel ->
+                        FuelItem(
+                            fuel = fuel,
+                            onEditClick = { onFuelEditClick(fuel) },
+                            onDeleteClick = { onFuelDeleteClick(fuel) },
+                            expanded = expandedFuelIds.value.contains(fuel.id),
+                            onExpandedChange = { isExpanded ->
+                                expandedFuelIds.value = if (isExpanded) {
+                                    expandedFuelIds.value + fuel.id
+                                } else {
+                                    expandedFuelIds.value - fuel.id
                                 }
-                            )
-                        }
+                            },
+                            modifier = Modifier.animateItem()
+                        )
                     }
-                } else {
-                    item {
-                        AnimatedVisibility(
-                            visible = areItemsVisible && !shouldExit,
-                            enter = fadeIn(
-                                animationSpec = tween(durationMillis = 800, delayMillis = 300)
-                            ) + slideInVertically(
-                                initialOffsetY = { it / 2 },
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            ),
-                            exit = slideOutVertically(
-                                targetOffsetY = { it / 2 },
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            ) + fadeOut(
-                                animationSpec = tween(durationMillis = 400)
-                            )
-                        ) {
+
+                    if (fuels.isEmpty()) {
+                        item {
                             Text(
                                 text = stringResource(R.string.nothing_to_see_here),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier
-                                    .fillMaxWidth(),
+                                    .fillMaxWidth()
+                                    .animateItem(),
                                 textAlign = TextAlign.Center
                             )
                         }
                     }
-                }
 
-                item {
-                    Spacer(
-                        modifier = Modifier
-                            .padding(bottom = dimensionResource(R.dimen.bottom_spacer))
-                            .fillMaxWidth()
-                    )
+                    item {
+                        Spacer(
+                            modifier = Modifier
+                                .padding(bottom = dimensionResource(R.dimen.bottom_spacer))
+                                .fillMaxWidth()
+                        )
+                    }
                 }
             }
         }

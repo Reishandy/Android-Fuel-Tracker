@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -80,7 +80,7 @@ fun Home(
     val fabScale by animateFloatAsState(
         targetValue = if (areItemsVisible && !shouldExit) 1f else 0f,
         animationSpec = spring(
-            dampingRatio = Spring.DampingRatioNoBouncy,
+            dampingRatio = Spring.DampingRatioLowBouncy,
             stiffness = Spring.StiffnessMedium
         ),
         label = "fab_scale"
@@ -99,7 +99,7 @@ fun Home(
                 enter = slideInVertically(
                     initialOffsetY = { -it },
                     animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        dampingRatio = Spring.DampingRatioLowBouncy,
                         stiffness = Spring.StiffnessLow
                     )
                 ) + fadeIn(
@@ -108,7 +108,7 @@ fun Home(
                 exit = slideOutVertically(
                     targetOffsetY = { -it },
                     animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        dampingRatio = Spring.DampingRatioLowBouncy,
                         stiffness = Spring.StiffnessLow
                     )
                 ) + fadeOut(
@@ -130,90 +130,65 @@ fun Home(
                 }
             }
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
-                state = lazyListState
+            AnimatedVisibility(
+                visible = areItemsVisible && !shouldExit,
+                enter = slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeIn(
+                    animationSpec = tween(durationMillis = 600)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ) + fadeOut(
+                    animationSpec = tween(durationMillis = 400)
+                )
             ) {
-                if (vehiclesWithStats.isNotEmpty()) {
-                    itemsIndexed(
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                    state = lazyListState
+                ) {
+                    items(
                         items = vehiclesWithStats,
-                        key = { _, it -> it.vehicle.id }) { index, vehicleWithStats ->
-                        val delay = index * 100
-                        val reverseDelay = (vehiclesWithStats.size - 1 - index) * 80
-
-                        AnimatedVisibility(
-                            visible = areItemsVisible && !shouldExit,
-                            enter = slideInVertically(
-                                initialOffsetY = { it / 2 },
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            ) + fadeIn(
-                                animationSpec = tween(durationMillis = 600, delayMillis = delay)
-                            ),
-                            exit = slideOutVertically(
-                                targetOffsetY = { it / 2 },
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            ) + fadeOut(
-                                animationSpec = tween(
-                                    durationMillis = 400,
-                                    delayMillis = reverseDelay
-                                )
-                            )
-                        ) {
-                            VehicleItem(
-                                vehicleWithStats = vehicleWithStats,
-                                onClick = { onVehicleClick(vehicleWithStats) },
-                                onEditClick = onEditVehicleClick,
-                                onDeleteClick = onDeleteVehicleClick
-                            )
-                        }
+                        key = { it.vehicle.id }
+                    ) { vehicleWithStats ->
+                        VehicleItem(
+                            vehicleWithStats = vehicleWithStats,
+                            onClick = { onVehicleClick(vehicleWithStats) },
+                            onEditClick = { onEditVehicleClick(vehicleWithStats.vehicle) },
+                            onDeleteClick = { onDeleteVehicleClick(vehicleWithStats.vehicle) },
+                            modifier = Modifier.animateItem()
+                        )
                     }
-                } else {
-                    item {
-                        AnimatedVisibility(
-                            visible = areItemsVisible && !shouldExit,
-                            enter = fadeIn(
-                                animationSpec = tween(durationMillis = 800, delayMillis = 300)
-                            ) + slideInVertically(
-                                initialOffsetY = { it / 2 },
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            ),
-                            exit = slideOutVertically(
-                                targetOffsetY = { it / 2 },
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            ) + fadeOut(
-                                animationSpec = tween(durationMillis = 400)
-                            )
-                        ) {
+
+                    if (vehiclesWithStats.isEmpty()) {
+                        item {
                             Text(
                                 text = stringResource(R.string.nothing_to_see_here),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier
-                                    .fillMaxWidth(),
+                                    .fillMaxWidth()
+                                    .animateItem(),
                                 textAlign = TextAlign.Center
                             )
                         }
                     }
-                }
 
-                item {
-                    Spacer(
-                        modifier = Modifier
-                            .padding(bottom = dimensionResource(R.dimen.bottom_spacer))
-                            .fillMaxWidth()
-                    )
+                    item {
+                        Spacer(
+                            modifier = Modifier
+                                .padding(bottom = dimensionResource(R.dimen.bottom_spacer))
+                                .fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
