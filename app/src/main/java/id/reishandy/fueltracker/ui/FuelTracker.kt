@@ -404,8 +404,3 @@ fun FuelTracker() {
         )
     }
 }
-
-// TODO: Features and stuff
-//  - Verify date picker fix
-//  - README.md add and screenshots
-//  - Export to XLSX?
