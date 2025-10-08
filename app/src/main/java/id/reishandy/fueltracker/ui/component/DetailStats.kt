@@ -23,7 +23,7 @@ fun DetailStats(
     modifier: Modifier = Modifier,
     vehicleWithStats: VehicleWithStats = VehicleWithStats(
         vehicle = Vehicle(
-            id = 1,
+            id = "1",
             name = "Placeholder",
             manufacturer = "Placeholder",
             model = "Placeholder",
@@ -149,7 +149,7 @@ fun DetailStatsPreview() {
             DetailStats(
                 vehicleWithStats = VehicleWithStats(
                     vehicle = Vehicle(
-                        id = 1,
+                        id = "1",
                         name = "My Motorcycle",
                         manufacturer = "Honda",
                         model = "PCX 160",

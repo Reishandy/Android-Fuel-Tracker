@@ -40,9 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 enum class FuelTrackerNav {
-    HOME,
-    VEHICLE_DETAIL,
-    SETTING
+    HOME, VEHICLE_DETAIL, SETTING
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -179,8 +177,7 @@ fun FuelTracker() {
                     },
                     onLoginClick = {
                         authViewModel.signInWithGoogle(
-                            context = context,
-                            request = authViewModel.createSignInRequest(
+                            context = context, request = authViewModel.createSignInRequest(
                                 authViewModel.createGoogleSignInOption(false)
                             )
                         )
@@ -225,9 +222,9 @@ fun FuelTracker() {
                         context = context,
                         vehicle = vehicleUiState.selectedVehicleWithStats!!.vehicle,
                         fuel = fuelFormUiState.selectedFuel!!,
-                        previousOdometer = fuelUiState.fuels
-                            .filter { fuel -> fuel.createdAt < fuelFormUiState.selectedFuel!!.createdAt }
-                            .maxByOrNull { it.createdAt }?.odometer,
+                        previousOdometer = fuelUiState.fuels.filter { fuel ->
+                            fuel.date < fuelFormUiState.selectedFuel!!.date || (fuel.date == fuelFormUiState.selectedFuel!!.date && fuel.createdAt < fuelFormUiState.selectedFuel!!.createdAt)
+                        }.maxWithOrNull(compareBy({ it.date }, { it.createdAt }))?.odometer,
                         onSuccess = {
                             scope.launch {
                                 fuelViewModel.populateFuels(vehicleUiState.selectedVehicleWithStats!!.vehicle.id)
@@ -236,13 +233,16 @@ fun FuelTracker() {
                                 fuelFormViewModel.clearEdit()
                                 fuelFormViewModel.hideSheet()
                             }
-                        }
-                    )
+                        })
                 } else {
                     fuelFormViewModel.addFuel(
                         context = context,
                         vehicle = vehicleUiState.selectedVehicleWithStats!!.vehicle,
-                        previousOdometer = fuelUiState.fuels.maxByOrNull { it.createdAt }?.odometer,
+                        previousOdometer = fuelUiState.fuels.maxWithOrNull(
+                            compareBy(
+                                { it.date },
+                                { it.createdAt })
+                        )?.odometer,
                         onSuccess = {
                             scope.launch {
                                 fuelViewModel.populateFuels(vehicleUiState.selectedVehicleWithStats!!.vehicle.id)
@@ -251,8 +251,7 @@ fun FuelTracker() {
                                 fuelFormViewModel.resetForm()
                                 fuelFormViewModel.hideSheet()
                             }
-                        }
-                    )
+                        })
                 }
             },
             sheetState = fuelSheetState,
@@ -278,15 +277,26 @@ fun FuelTracker() {
             onPricePerLiterValueChange = { fuelFormViewModel.updatePricePerLiter(it) },
             pricePerLiterError = fuelFormUiState.errorState.pricePerLiterError,
             canCalculateTrip = fuelFormViewModel.odometer.isNotEmpty() && fuelUiState.fuels.isNotEmpty() &&
-                    (if (fuelFormUiState.isEdit) fuelFormUiState.selectedFuel!!.id != fuelUiState.fuels.minByOrNull { it.id }?.id else true),
+                    (if (fuelFormUiState.isEdit)
+                        fuelUiState.fuels.any { fuel ->
+                            fuel.date < fuelFormUiState.selectedFuel!!.date ||
+                                    (fuel.date == fuelFormUiState.selectedFuel!!.date && fuel.createdAt < fuelFormUiState.selectedFuel!!.createdAt)
+                        }
+                    else true),
             onCanCalculateTripClick = {
-                fuelFormViewModel.calculateTripFromPreviousOdometer(
-                    if (fuelFormUiState.isEdit) fuelUiState.fuels
-                        .filter { fuel -> fuel.createdAt < fuelFormUiState.selectedFuel!!.createdAt }
-                        .maxByOrNull { it.createdAt }?.odometer else fuelUiState.fuels.maxByOrNull { it.createdAt }?.odometer
-                )
-            }
-        )
+                val previousOdometer = if (fuelFormUiState.isEdit) {
+                    fuelUiState.fuels.filter { fuel ->
+                        fuel.date < fuelFormUiState.selectedFuel!!.date || (fuel.date == fuelFormUiState.selectedFuel!!.date && fuel.createdAt < fuelFormUiState.selectedFuel!!.createdAt)
+                    }.maxWithOrNull(compareBy({ it.date }, { it.createdAt }))?.odometer
+                } else {
+                    fuelUiState.fuels.maxWithOrNull(
+                        compareBy(
+                            { it.date },
+                            { it.createdAt })
+                    )?.odometer
+                }
+                fuelFormViewModel.calculateTripFromPreviousOdometer(previousOdometer)
+            })
 
 
         VehicleFormBottomSheet(
@@ -313,19 +323,15 @@ fun FuelTracker() {
                                 vehicleFormViewModel.clearEdit()
                                 vehicleFormViewModel.hideSheet()
                             }
-                        }
-                    )
+                        })
                 } else {
-                    vehicleFormViewModel.addVehicle(
-                        context = context,
-                        onSuccess = {
-                            scope.launch {
-                                vehicleSheetState.hide()
-                                vehicleFormViewModel.resetForm()
-                                vehicleFormViewModel.hideSheet()
-                            }
+                    vehicleFormViewModel.addVehicle(context = context, onSuccess = {
+                        scope.launch {
+                            vehicleSheetState.hide()
+                            vehicleFormViewModel.resetForm()
+                            vehicleFormViewModel.hideSheet()
                         }
-                    )
+                    })
                 }
             },
             sheetState = vehicleSheetState,
@@ -375,8 +381,7 @@ fun FuelTracker() {
                                 deleteViewModel.clear()
                                 deleteViewModel.hideSheet()
                             }
-                        }
-                    )
+                        })
                 } else {
                     deleteViewModel.deleteFuel(
                         context = context,
@@ -389,8 +394,7 @@ fun FuelTracker() {
                                 deleteViewModel.clear()
                                 deleteViewModel.hideSheet()
                             }
-                        }
-                    )
+                        })
                 }
             },
             sheetState = deleteSheetState,
@@ -402,7 +406,6 @@ fun FuelTracker() {
 }
 
 // TODO: Features and stuff
-//  - change db id to UUID for firebase sync
 //  - Verify date picker fix
 //  - Sync every CRUD or db update
 //  - Custom splash screen

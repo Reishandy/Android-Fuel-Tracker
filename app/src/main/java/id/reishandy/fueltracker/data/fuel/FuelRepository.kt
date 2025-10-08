@@ -21,9 +21,9 @@ class FuelRepository @Inject constructor(
 
     fun getAll() = fuelDao.getAll()
 
-    suspend fun getById(id: Long) = fuelDao.getById(id)
+    suspend fun getById(id: String) = fuelDao.getById(id)
 
-    fun getByVehicleId(vehicleId: Long) = fuelDao.getByVehicleId(vehicleId)
+    fun getByVehicleId(vehicleId: String) = fuelDao.getByVehicleId(vehicleId)
 
     private suspend fun calculateDynamicFields(fuel: Fuel): Fuel {
         val vehicle = vehicleDao.getById(fuel.vehicleId)

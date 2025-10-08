@@ -38,7 +38,6 @@ data class AuthState(
 class AuthViewModel @Inject constructor(
     private val credentialManager: CredentialManager,
     private val preferenceManager: FuelTrackerPreferenceManager,
-    private val fuelTrackerAppDatabase: FuelTrackerAppDatabase,
     private val dataSyncService: DataSyncService,
     private val syncObserver: SyncObserver
 ): ViewModel() {
@@ -46,7 +45,6 @@ class AuthViewModel @Inject constructor(
     val uiState: StateFlow<AuthState> = _uiState.asStateFlow()
 
     init {
-        // Load user data from preferences
         val (name, email, photoUrl) = preferenceManager.getUser()
         _uiState.value = AuthState(name, email, photoUrl)
     }
@@ -110,7 +108,14 @@ class AuthViewModel @Inject constructor(
                     .addOnSuccessListener { authResult ->
                         viewModelScope.launch {
                             // On success, sync data from cloud
-                            onFirebaseSignInSuccess(context)
+                            try {
+                                dataSyncService.syncFromCloud()
+                                syncObserver.startSyncing()
+                                showToast(context, "Data restored from cloud", false)
+                            } catch (e: Exception) {
+                                Log.e("AuthViewModel", "Sync failed", e)
+                                showToast(context, "Sync failed: ${e.message}", true)
+                            }
                         }
                     }
                     .addOnFailureListener { exception ->
@@ -174,8 +179,6 @@ class AuthViewModel @Inject constructor(
                     preferenceManager.clearUser()
                     // Stop sync observer
                     syncObserver.stopSyncing()
-                    // Clear local database
-                    fuelTrackerAppDatabase.clearAllTables()
                     // Sign out from Firebase
                     Firebase.auth.signOut()
                 }
@@ -186,31 +189,6 @@ class AuthViewModel @Inject constructor(
                 Log.e("AuthViewModel", "Sign-out failed", ex)
             } finally {
                 setProcessing(false)
-            }
-        }
-    }
-
-    private fun onFirebaseSignInSuccess(context: Context) {
-        viewModelScope.launch {
-            try {
-                dataSyncService.syncFromCloud() // Restore from cloud
-                syncObserver.startSyncing()
-                showToast(context, "Data restored from cloud", false)
-            } catch (e: Exception) {
-                Log.e("AuthViewModel", "Sync failed", e)
-                showToast(context, "Sync failed: ${e.message}", true)
-            }
-        }
-    }
-
-    fun backupToCloud(context: Context) {
-        viewModelScope.launch {
-            try {
-                dataSyncService.backupToCloud()
-                showToast(context, "Backup successful", false)
-            } catch (e: Exception) {
-                Log.e("AuthViewModel", "Backup failed", e)
-                showToast(context, "Backup failed", true)
             }
         }
     }

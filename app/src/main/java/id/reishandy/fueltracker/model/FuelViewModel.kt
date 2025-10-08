@@ -24,7 +24,7 @@ class FuelViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FuelState())
     val uiState: StateFlow<FuelState> = _uiState.asStateFlow()
 
-    fun populateFuels(vehicleId: Long) {
+    fun populateFuels(vehicleId: String) {
         viewModelScope.launch {
             try {
                 fuelRepository.getByVehicleId(vehicleId).collect { fuels ->

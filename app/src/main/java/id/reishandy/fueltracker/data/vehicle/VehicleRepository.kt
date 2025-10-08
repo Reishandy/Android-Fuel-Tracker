@@ -20,9 +20,9 @@ class VehicleRepository @Inject constructor(
 
     fun getAll() = vehicleDao.getAll()
 
-    suspend fun getById(id: Long) = vehicleDao.getById(id)
+    suspend fun getById(id: String) = vehicleDao.getById(id)
 
     fun getAllWithStats(): Flow<List<VehicleWithStats>> = vehicleDao.getAllWithStats()
 
-    suspend fun getByIdWithStats(id: Long): VehicleWithStats? = vehicleDao.getByIdWithStats(id)
+    suspend fun getByIdWithStats(id: String): VehicleWithStats? = vehicleDao.getByIdWithStats(id)
 }

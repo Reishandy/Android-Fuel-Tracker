@@ -220,7 +220,7 @@ internal fun PreviewHome() {
                 vehiclesWithStats = listOf(
                     VehicleWithStats(
                         vehicle = Vehicle(
-                            id = 1,
+                            id = "1",
                             name = "My Car",
                             manufacturer = "Toyota",
                             model = "Avanza",
@@ -238,7 +238,7 @@ internal fun PreviewHome() {
                     ),
                     VehicleWithStats(
                         vehicle = Vehicle(
-                            id = 2,
+                            id = "2",
                             name = "My Motorcycle",
                             manufacturer = "Honda",
                             model = "Vario 150",
@@ -256,7 +256,7 @@ internal fun PreviewHome() {
                     ),
                     VehicleWithStats(
                         vehicle = Vehicle(
-                            id = 3,
+                            id = "3",
                             name = "My Second Motorcycle",
                             manufacturer = "Yamaha",
                             model = "NMAX 155",
@@ -274,7 +274,7 @@ internal fun PreviewHome() {
                     ),
                     VehicleWithStats(
                         vehicle = Vehicle(
-                            id = 4,
+                            id = "4",
                             name = "My Old Car",
                             manufacturer = "Daihatsu",
                             model = "Xenia",

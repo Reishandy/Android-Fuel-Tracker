@@ -40,7 +40,7 @@ fun VehicleItem(
     modifier: Modifier = Modifier,
     vehicleWithStats: VehicleWithStats = VehicleWithStats(
         vehicle = Vehicle(
-            id = 1,
+            id = "1",
             name = "Placeholder",
             manufacturer = "Placeholder",
             model = "Placeholder",
@@ -197,7 +197,7 @@ internal fun PreviewVehicleItem() {
         VehicleItem(
             vehicleWithStats = VehicleWithStats(
                 vehicle = Vehicle(
-                    id = 1,
+                    id = "1",
                     name = "Main Motorcycle",
                     manufacturer = "Honda",
                     model = "PCX 160",

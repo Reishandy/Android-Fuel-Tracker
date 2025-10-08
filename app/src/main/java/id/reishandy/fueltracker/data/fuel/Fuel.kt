@@ -7,6 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.IgnoreExtraProperties
 import id.reishandy.fueltracker.data.vehicle.Vehicle
+import java.util.UUID
 
 @IgnoreExtraProperties
 @Entity(
@@ -25,12 +26,12 @@ import id.reishandy.fueltracker.data.vehicle.Vehicle
     ]
 )
 data class Fuel(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = "id")
-    val id: Long = 0,
+    val id: String,
 
     @ColumnInfo(name = "vehicle_id")
-    val vehicleId: Long,
+    val vehicleId: String,
 
     @ColumnInfo(name = "date")
     val date: Long,

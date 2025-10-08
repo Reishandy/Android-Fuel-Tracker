@@ -2,6 +2,7 @@ package id.reishandy.fueltracker.model
 
 import android.content.Context
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 data class FuelFormErrorState(
@@ -42,7 +44,7 @@ class FuelFormViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FuelFormState())
     val uiState: StateFlow<FuelFormState> = _uiState.asStateFlow()
 
-    var date by mutableStateOf(System.currentTimeMillis())
+    var date by mutableLongStateOf(System.currentTimeMillis())
         private set
 
     var odometer by mutableStateOf("")
@@ -216,9 +218,9 @@ class FuelFormViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 setProcessing(true)
-                // TODO: Sync cloud?
 
                 val newFuel = Fuel(
+                    id = UUID.randomUUID().toString(),
                     date = date,
                     odometer = odometer.toInt(),
                     trip = trip.toInt(),
@@ -234,8 +236,7 @@ class FuelFormViewModel @Inject constructor(
                 )
                 fuelRepository.insert(newFuel)
 
-                                showToast(context, "Refuel recorded successfully")
-
+                showToast(context, "Refuel recorded successfully")
                 onSuccess()
             } catch (e: Exception) {
                 showToast(context, "Error recording fuel: ${e.message}", true)
@@ -269,7 +270,6 @@ class FuelFormViewModel @Inject constructor(
                 fuelRepository.update(updatedFuel)
 
                 showToast(context, "Refuel edited successfully")
-
                 onSuccess()
             } catch (e: Exception) {
                 showToast(context, "Error updating refuel: ${e.message}", true)

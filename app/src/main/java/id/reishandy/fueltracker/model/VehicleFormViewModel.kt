@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.util.UUID
 import javax.inject.Inject
 
 data class VehicleFormErrorState(
@@ -176,9 +177,9 @@ class VehicleFormViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 setProcessing(true)
-                // TODO: Sync cloud?
 
                 val newVehicle = Vehicle(
+                    id = UUID.randomUUID().toString(),
                     name = name.trim(),
                     manufacturer = manufacturer.trim(),
                     model = model.trim(),
@@ -188,7 +189,6 @@ class VehicleFormViewModel @Inject constructor(
                 vehicleRepository.insert(newVehicle)
 
                 showToast(context, "Vehicle added successfully")
-
                 onSuccess()
             } catch (e: Exception) {
                 showToast(context, "Error adding vehicle: ${e.message}", true)
@@ -219,7 +219,6 @@ class VehicleFormViewModel @Inject constructor(
                 vehicleRepository.update(updatedVehicle)
 
                 showToast(context, "Vehicle edited successfully")
-
                 onSuccess()
             } catch (e: Exception) {
                 showToast(context, "Error editing vehicle: ${e.message}", true)

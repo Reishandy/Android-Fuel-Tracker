@@ -52,8 +52,8 @@ import id.reishandy.fueltracker.util.formatNumber
 fun FuelItem(
     modifier: Modifier = Modifier,
     fuel: Fuel = Fuel(
-        id = 0,
-        vehicleId = 0,
+        id = "0",
+        vehicleId = "0",
         date = 0,
         odometer = 0,
         trip = 0,
@@ -341,8 +341,8 @@ internal fun PreviewFuelItem() {
 
             FuelItem(
                 fuel = Fuel(
-                    id = 1,
-                    vehicleId = 1,
+                    id = "1",
+                    vehicleId = "1",
                     date = 1705324800000,
                     odometer = 15000,
                     trip = 250,
@@ -360,8 +360,8 @@ internal fun PreviewFuelItem() {
 
             FuelItem(
                 fuel = Fuel(
-                    id = 2,
-                    vehicleId = 1,
+                    id = "2",
+                    vehicleId = "1",
                     date = 1705238400000,
                     odometer = 14750,
                     trip = 230,

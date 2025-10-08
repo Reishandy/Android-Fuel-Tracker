@@ -58,7 +58,7 @@ fun Detail(
     onDeleteClick: () -> Unit = { },
     vehicleWithStats: VehicleWithStats = VehicleWithStats(
         vehicle = Vehicle(
-            id = 1,
+            id = "1",
             name = "Placeholder",
             manufacturer = "Placeholder",
             model = "Placeholder",
@@ -83,7 +83,7 @@ fun Detail(
     var isHeaderVisible by remember { mutableStateOf(false) }
     var areStatsVisible by remember { mutableStateOf(false) }
     var areItemsVisible by remember { mutableStateOf(false) }
-    val expandedFuelIds = remember { mutableStateOf(setOf<Long>()) }
+    val expandedFuelIds = remember { mutableStateOf(setOf<String>()) }
 
     val lazyListState = rememberLazyListState()
 
@@ -288,7 +288,7 @@ fun DetailPreview() {
             Detail(
                 vehicleWithStats = VehicleWithStats(
                     vehicle = Vehicle(
-                        id = 1,
+                        id = "1",
                         name = "My Motorcycle",
                         manufacturer = "Honda",
                         model = "PCX 160",

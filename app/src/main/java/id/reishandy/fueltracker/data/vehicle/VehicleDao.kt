@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface VehicleDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vehicle: Vehicle): Long
 
     @Delete
@@ -24,7 +24,7 @@ interface VehicleDao {
     fun getAll(): Flow<List<Vehicle>>
 
     @Query("SELECT * FROM vehicles WHERE id = :id")
-    suspend fun getById(id: Long): Vehicle?
+    suspend fun getById(id: String): Vehicle?
 
     /**
      * Retrieves all vehicles with calculated statistics based on their fuel records.
@@ -69,6 +69,7 @@ interface VehicleDao {
     FROM vehicles v
     LEFT JOIN fuels f2 ON f2.vehicle_id = v.id
     GROUP BY v.id
+    ORDER BY v.created_at DESC
     """
     )
     fun getAllWithStats(): Flow<List<VehicleWithStats>>
@@ -122,7 +123,7 @@ interface VehicleDao {
     GROUP BY v.id
     """
     )
-    suspend fun getByIdWithStats(id: Long): VehicleWithStats?
+    suspend fun getByIdWithStats(id: String): VehicleWithStats?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vehicles: List<Vehicle>)

@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.IgnoreExtraProperties
+import java.util.UUID
 
 @IgnoreExtraProperties
 @Entity(
@@ -12,9 +13,9 @@ import com.google.firebase.firestore.IgnoreExtraProperties
     indices = [Index(value = ["created_at"])]
 )
 data class Vehicle(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = "id")
-    val id: Long = 0,
+    val id: String,
 
     @ColumnInfo(name = "name")
     val name: String,
