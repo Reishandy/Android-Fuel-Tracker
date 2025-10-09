@@ -17,11 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
 import java.util.Locale
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +32,18 @@ fun LocaleDropdown(
     onOptionSelected: (Locale) -> Unit = { }
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf(selectedLocale.getDisplayName(selectedLocale)) }
+
+    val filteredLocales = remember(searchText, locales) {
+        if (searchText.isBlank()) {
+            locales
+        } else {
+            locales.filter {
+                it.getDisplayName(it).contains(searchText, ignoreCase = true) ||
+                        it.toLanguageTag().contains(searchText, ignoreCase = true)
+            }
+        }
+    }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -39,9 +51,11 @@ fun LocaleDropdown(
         modifier = modifier
     ) {
         TextField(
-            value = selectedLocale.toString(),
-            onValueChange = {},
-            readOnly = true,
+            value = searchText,
+            onValueChange = { newText ->
+                searchText = newText
+                if (!expanded) expanded = true
+            },
             singleLine = true,
             textStyle = MaterialTheme.typography.bodyMedium,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -57,19 +71,27 @@ fun LocaleDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            locales.forEach { locale ->
+            if (filteredLocales.isEmpty()) {
                 DropdownMenuItem(
-                    text = { Text(locale.toString()) },
-                    onClick = {
-                        onOptionSelected(locale)
-                        expanded = false
-                    }
+                    text = { Text(stringResource(R.string.no_results)) },
+                    onClick = { },
+                    enabled = false
                 )
+            } else {
+                filteredLocales.forEach { locale ->
+                    DropdownMenuItem(
+                        text = { Text(locale.getDisplayName(locale)) },
+                        onClick = {
+                            onOptionSelected(locale)
+                            searchText = locale.getDisplayName(locale)
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }
 }
-
 
 @Preview
 @Composable

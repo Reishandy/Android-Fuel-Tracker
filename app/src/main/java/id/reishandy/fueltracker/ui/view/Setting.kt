@@ -240,34 +240,29 @@ fun Setting(
             Column {
                 SectionDivider(title = R.string.settings)
 
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
                             vertical = dimensionResource(R.dimen.padding_medium),
                             horizontal = dimensionResource(R.dimen.padding_small)
                         ),
-                    horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
                 ) {
-                    Column(
-                        modifier = Modifier.weight(2 / 3f),
-                        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_extra_small))
-                    ) {
-                        Text(
-                            text = stringResource(R.string.locale),
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                    Text(
+                        text = stringResource(R.string.locale),
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
-                        Text(
-                            text = stringResource(R.string.locale_description),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    Text(
+                        text = stringResource(R.string.locale_description),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
 
                     LocaleDropdown(
-                        modifier = Modifier.weight(1 / 3f),
+                        modifier = Modifier
+                            .padding(top = dimensionResource(R.dimen.padding_small)),
                         locales = locales,
                         selectedLocale = selectedLocale,
                         onOptionSelected = onLocaleSelected
