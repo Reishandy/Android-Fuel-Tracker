@@ -14,13 +14,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import id.reishandy.fueltracker.R
 import id.reishandy.fueltracker.util.PastOrPresentSelectableDates
 import id.reishandy.fueltracker.ui.theme.FuelTrackerTheme
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @Composable
 fun DatePickerModal(
     onDateSelected: (Long) -> Unit,
     onDismiss: () -> Unit,
-    initialDateMillis: Long = System.currentTimeMillis(),
 ) {
+    // IDK what is happening here, but without this offset adjustment,
+    // the selected date will be one day earlier than it should be
+    // So I'm keeping this here
+    val currentZonedDateTime = ZonedDateTime.now(ZoneId.systemDefault())
+    val zoneOffset = currentZonedDateTime.offset
+    val initialDateMillis = currentZonedDateTime.toInstant().toEpochMilli() + zoneOffset.totalSeconds * 1000
+
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = initialDateMillis,
         selectableDates = PastOrPresentSelectableDates

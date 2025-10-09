@@ -1,14 +1,8 @@
 package id.reishandy.fueltracker.ui.component
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -289,7 +283,7 @@ fun FuelItem(
                 expanded = showMenu,
                 onDismissRequest = { showMenu = false },
                 shape = MaterialTheme.shapes.medium,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                containerColor = CardDefaults.cardColors().containerColor,
                 shadowElevation = dimensionResource(R.dimen.shadow_elevation)
             ) {
                 DropdownMenuItem(

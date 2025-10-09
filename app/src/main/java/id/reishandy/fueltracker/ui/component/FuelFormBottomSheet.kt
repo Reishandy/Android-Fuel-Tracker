@@ -110,7 +110,7 @@ fun FuelFormBottomSheet(
                     verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
                 ) {
                     TextField(
-                        value = dateValue.let { convertMillisToDate(it) },
+                        value = convertMillisToDate(dateValue),
                         onValueChange = { },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -340,8 +340,7 @@ fun FuelFormBottomSheet(
         if (showDatePicker) {
             DatePickerModal(
                 onDateSelected = { onDateValueChange(it) },
-                onDismiss = { showDatePicker = false },
-                initialDateMillis = dateValue
+                onDismiss = { showDatePicker = false }
             )
         }
     }

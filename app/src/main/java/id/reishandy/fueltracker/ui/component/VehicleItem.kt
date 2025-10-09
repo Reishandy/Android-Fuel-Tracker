@@ -69,10 +69,6 @@ fun VehicleItem(
                 onClick = { onClick() },
                 onLongClick = { showMenu = true }
             ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-        ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = dimensionResource(R.dimen.shadow_elevation)
         )
@@ -151,7 +147,7 @@ fun VehicleItem(
                 expanded = showMenu,
                 onDismissRequest = { showMenu = false },
                 shape = MaterialTheme.shapes.medium,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                containerColor = CardDefaults.cardColors().containerColor,
                 shadowElevation = dimensionResource(R.dimen.shadow_elevation)
             ) {
                 DropdownMenuItem(

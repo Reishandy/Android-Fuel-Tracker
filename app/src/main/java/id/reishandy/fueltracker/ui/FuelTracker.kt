@@ -2,6 +2,7 @@ package id.reishandy.fueltracker.ui
 
 import android.app.Activity
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -129,6 +130,14 @@ fun FuelTracker() {
                 }
                 var shouldExit by remember { mutableStateOf(false) }
 
+                BackHandler {
+                    shouldExit = true
+                    scope.launch {
+                        kotlinx.coroutines.delay(300)
+                        navController.popBackStack()
+                    }
+                }
+
                 Detail(
                     onBackClick = {
                         shouldExit = true
@@ -166,6 +175,14 @@ fun FuelTracker() {
 
             composable(route = FuelTrackerNav.SETTING.name) {
                 var shouldExit by remember { mutableStateOf(false) }
+
+                BackHandler {
+                    shouldExit = true
+                    scope.launch {
+                        kotlinx.coroutines.delay(300)
+                        navController.popBackStack()
+                    }
+                }
 
                 Setting(
                     onBackClick = {

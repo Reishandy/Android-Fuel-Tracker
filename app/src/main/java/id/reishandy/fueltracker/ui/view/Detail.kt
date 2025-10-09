@@ -81,7 +81,6 @@ fun Detail(
     shouldExit: Boolean = false
 ) {
     var isHeaderVisible by remember { mutableStateOf(false) }
-    var areStatsVisible by remember { mutableStateOf(false) }
     var areItemsVisible by remember { mutableStateOf(false) }
     val expandedFuelIds = remember { mutableStateOf(setOf<String>()) }
 
@@ -90,8 +89,6 @@ fun Detail(
     LaunchedEffect(Unit) {
         isHeaderVisible = true
         kotlinx.coroutines.delay(200)
-        areStatsVisible = true
-        kotlinx.coroutines.delay(400)
         areItemsVisible = true
     }
 
@@ -99,8 +96,6 @@ fun Detail(
         if (shouldExit) {
             areItemsVisible = false
             kotlinx.coroutines.delay(100)
-            areStatsVisible = false
-            kotlinx.coroutines.delay(200)
             isHeaderVisible = false
         }
     }
@@ -159,40 +154,6 @@ fun Detail(
             }
 
             AnimatedVisibility(
-                visible = areStatsVisible && !shouldExit,
-                enter = slideInVertically(
-                    initialOffsetY = { it / 2 },
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioLowBouncy,
-                        stiffness = Spring.StiffnessLow
-                    )
-                ) + fadeIn(
-                    animationSpec = tween(durationMillis = 600, delayMillis = 100)
-                ),
-                exit = slideOutVertically(
-                    targetOffsetY = { it / 2 },
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioLowBouncy,
-                        stiffness = Spring.StiffnessLow
-                    )
-                ) + fadeOut(
-                    animationSpec = tween(durationMillis = 400)
-                )
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
-                ) {
-                    SectionDivider(title = R.string.vehicle_stats)
-
-                    DetailStats(
-                        vehicleWithStats = vehicleWithStats
-                    )
-
-                    SectionDivider(title = R.string.refuel_history)
-                }
-            }
-
-            AnimatedVisibility(
                 visible = areItemsVisible && !shouldExit,
                 enter = slideInVertically(
                     initialOffsetY = { it },
@@ -217,6 +178,20 @@ fun Detail(
                     verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
                     state = lazyListState
                 ) {
+                    item {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+                        ) {
+                            SectionDivider(title = R.string.vehicle_stats)
+
+                            DetailStats(
+                                vehicleWithStats = vehicleWithStats
+                            )
+
+                            SectionDivider(title = R.string.refuel_history)
+                        }
+                    }
+
                     items(
                         items = fuels,
                         key = { it.id }
