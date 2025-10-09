@@ -103,7 +103,7 @@ fun FuelItem(
                 ) {
                     Text(
                         text = convertMillisToDate(fuel.date),
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.padding(
                             horizontal = dimensionResource(R.dimen.padding_small),
                             vertical = dimensionResource(R.dimen.padding_extra_small)
@@ -116,8 +116,9 @@ fun FuelItem(
                         R.string.remain_liter_value,
                         formatNumber(fuel.fuelRemaining, 2)
                     ),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.End
                 )
             }
 

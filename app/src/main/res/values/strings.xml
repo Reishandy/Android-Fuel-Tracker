@@ -70,6 +70,7 @@
     <string name="locale">Locale</string>
     <string name="locale_description">This changes the app\'s locale and will affect currency, date, and number formatting.</string>
     <string name="calc">Calc</string>
-    <string name="remain_liter_value">Remain %1$s L</string>
+    <string name="remain_liter_value">Remain\n%1$s L</string>
     <string name="recorded_refuels">%1$d recorded refuels</string>
+    <string name="no_results">No results</string>
 </resources>
