@@ -1,21 +1,70 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ========== General Android / Kotlin ==========
+# Keep Kotlin metadata (required for reflection and serialization)
+-keep class kotlin.Metadata { *; }
+-dontwarn kotlin.**
+-dontwarn kotlinx.**
+-dontwarn org.jetbrains.annotations.**
+-keepattributes *Annotation*
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep your app entry points
+-keep class id.reishandy.fueltracker.FuelTrackerApp { *; }
+-keep class id.reishandy.fueltracker.MainActivity { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# ========== Jetpack Compose ==========
+# Keep Composables and related runtime
+-keep @androidx.compose.runtime.Composable class * { *; }
+-keep class androidx.compose.** { *; }
+-dontwarn androidx.compose.**
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# ========== Hilt / Dagger ==========
+# Keep Hilt/Dagger generated components
+-keep class dagger.hilt.** { *; }
+-keep class * implements dagger.hilt.internal.GeneratedComponent { *; }
+-dontwarn dagger.hilt.internal.**
+-dontwarn javax.inject.**
+-dontwarn dagger.**
+
+# ========== Room ==========
+-keep class androidx.room.** { *; }
+-keep interface androidx.room.** { *; }
+-keep class * extends androidx.room.RoomDatabase
+-dontwarn androidx.room.**
+
+# Keep entities, DAOs, and repositories
+-keep class id.reishandy.fueltracker.data.** { *; }
+
+# ========== Firebase ==========
+# General Firebase
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
+
+# Play services (for Google Sign-In)
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+
+# Firestore models annotated with @IgnoreExtraProperties
+-keepclassmembers class * {
+    @com.google.firebase.firestore.PropertyName <fields>;
+}
+
+# ========== Navigation Compose ==========
+-keep class androidx.navigation.** { *; }
+-dontwarn androidx.navigation.**
+
+# ========== Coil (Image loading) ==========
+-keep class coil.** { *; }
+-dontwarn coil.**
+
+# ========== Other utilities / helpers ==========
+-keep class id.reishandy.fueltracker.util.** { *; }
+-dontwarn id.reishandy.fueltracker.util.**
+
+# Keep ViewModels (Hilt + Compose rely on reflection here)
+-keep class id.reishandy.fueltracker.model.**ViewModel { *; }
+
+# ========== Optional but useful ==========
+# Keep your custom Application and DI module
+-keep class id.reishandy.fueltracker.di.AppModule { *; }
+
+# Keep line numbers for crash reports (optional)
+-keepattributes SourceFile,LineNumberTable
