@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import id.reishandy.fueltracker.data.vehicle.Vehicle
 import id.reishandy.fueltracker.data.vehicle.VehicleRepository
 import id.reishandy.fueltracker.data.vehicle.VehicleWithStats
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.IgnoreExtraProperties
-import java.util.UUID
 
 @IgnoreExtraProperties
 @Entity(

@@ -1,8 +1,8 @@
 [versions]
 agp = "8.13.0"
 coilCompose = "2.7.0"
-credentials = "1.6.0-beta01"
-credentialsPlayServicesAuth = "1.6.0-beta01"
+credentials = "1.6.0-beta02"
+credentialsPlayServicesAuth = "1.6.0-beta02"
 firebaseAuthKtx = "23.2.1"
 firebaseBom = "34.3.0"
 firebaseFirestoreKtx = "25.1.4"

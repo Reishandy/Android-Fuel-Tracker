@@ -148,7 +148,8 @@ fun Detail(
                     )
 
                     DetailHeader(
-                        vehicleWithStats = vehicleWithStats
+                        vehicleWithStats = vehicleWithStats,
+                        refuelRecorded = fuels.size
                     )
                 }
             }

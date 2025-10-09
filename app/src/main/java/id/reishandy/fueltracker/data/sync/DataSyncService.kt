@@ -17,10 +17,6 @@ class DataSyncService @Inject constructor(
     private val fuelTrackerAppDatabase: FuelTrackerAppDatabase,
     private val firestore: FirebaseFirestore
 ) {
-    private companion object {
-        const val TAG = "DataSyncService"
-    }
-
     suspend fun syncFromCloud() {
         val userId = Firebase.auth.currentUser?.uid
             ?: throw IllegalStateException("User not signed in")
@@ -57,7 +53,7 @@ class DataSyncService @Inject constructor(
             }
 
             Log.d(
-                TAG,
+                "DataSyncService",
                 "Restored ${cloudVehicles.size} vehicles and ${cloudFuels.size} fuels from cloud"
             )
         }
@@ -109,9 +105,9 @@ class DataSyncService @Inject constructor(
             // Commit all in one atomic operation
             batch.commit().await()
 
-            Log.d(TAG, "Backed up ${vehicles.size} vehicles and ${fuels.size} fuels to cloud")
+            Log.d("DataSyncService", "Backed up ${vehicles.size} vehicles and ${fuels.size} fuels to cloud")
         } catch (e: Exception) {
-            Log.e(TAG, "Backup failed", e)
+            Log.e("DataSyncService", "Backup failed", e)
             throw e
         }
     }

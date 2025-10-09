@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
 
     override fun attachBaseContext(base: Context) {
         val sharedPreferences =
-            base.getSharedPreferences("fuel_tracker_prefs", Context.MODE_PRIVATE)
+            base.getSharedPreferences("fuel_tracker_prefs", MODE_PRIVATE)
         val localeTag =
             sharedPreferences.getString("key_locale", null) ?: Locale.getDefault().toLanguageTag()
         val locale = Locale.forLanguageTag(localeTag)

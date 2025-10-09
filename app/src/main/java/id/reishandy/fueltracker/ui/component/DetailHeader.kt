@@ -34,7 +34,8 @@ fun DetailHeader(
         ),
         latestOdometer = 0,
         averageFuelEconomy = 0.0
-    )
+    ),
+    refuelRecorded: Int = 0
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -68,6 +69,14 @@ fun DetailHeader(
                 ),
                 style = MaterialTheme.typography.headlineMedium,
                 maxLines = 5,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = stringResource(R.string.recorded_refuels, refuelRecorded),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }

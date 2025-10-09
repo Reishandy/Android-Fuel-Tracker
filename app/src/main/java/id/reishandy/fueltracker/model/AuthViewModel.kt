@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -12,8 +13,10 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import id.reishandy.fueltracker.data.FuelTrackerAppDatabase
+import id.reishandy.fueltracker.BuildConfig
 import id.reishandy.fueltracker.data.FuelTrackerPreferenceManager
+import id.reishandy.fueltracker.data.sync.DataSyncService
+import id.reishandy.fueltracker.data.sync.SyncObserver
 import id.reishandy.fueltracker.util.generateSecureRandomNonce
 import id.reishandy.fueltracker.util.showToast
 import kotlinx.coroutines.Dispatchers
@@ -23,9 +26,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import id.reishandy.fueltracker.BuildConfig
-import id.reishandy.fueltracker.data.sync.DataSyncService
-import id.reishandy.fueltracker.data.sync.SyncObserver
 
 data class AuthState(
     val name: String? = null,
@@ -74,6 +74,9 @@ class AuthViewModel @Inject constructor(
             try {
                 val response = credentialManager.getCredential(context, request)
                 handleCredentialResponse(context, response)
+            } catch (e: NoCredentialException) {
+                // No saved credential, likely first-time sign-in
+                handleSignInException(context, e)
             } catch (e: Exception) {
                 // e is often GetCredentialException or subclass
                 // fallback if it's "no credential found" or something
@@ -150,6 +153,10 @@ class AuthViewModel @Inject constructor(
             try {
                 val resp2 = credentialManager.getCredential(context, fallbackReq)
                 handleCredentialResponse(context, resp2)
+            } catch (e2: NoCredentialException) {
+                // User likely cancelled the sign-in prompt
+                showToast(context, "Sign-in cancelled", true)
+                Log.e("AuthViewModel", "Sign-in cancelled", e2)
             } catch (e2: Exception) {
                 showToast(context, "Sign-in failed: ${e2.message}", true)
                 Log.e("AuthViewModel", "Sign-in failed", e2)
