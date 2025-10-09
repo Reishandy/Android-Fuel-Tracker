@@ -114,7 +114,7 @@ fun FuelItem(
                 Text(
                     text = stringResource(
                         R.string.remain_liter_value,
-                        formatNumber(fuel.fuelRemaining, 1)
+                        formatNumber(fuel.fuelRemaining, 2)
                     ),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -153,7 +153,7 @@ fun FuelItem(
                     Text(
                         text = stringResource(
                             R.string.liter_abbr_value,
-                            formatNumber(fuel.fuelAdded, 1)
+                            formatNumber(fuel.fuelAdded, 2)
                         ),
                         style = MaterialTheme.typography.titleLarge
                     )

@@ -62,7 +62,7 @@ fun DetailStats(
                 title = R.string.max_fuel,
                 value = stringResource(
                     R.string.liter_abbr_value,
-                    formatNumber(vehicleWithStats.vehicle.maxFuelCapacity, 1)
+                    formatNumber(vehicleWithStats.vehicle.maxFuelCapacity, 2)
                 )
             )
         }
@@ -108,7 +108,7 @@ fun DetailStats(
                 title = R.string.avg_refueled,
                 value = stringResource(
                     R.string.liter_abbr_value,
-                    formatNumber(vehicleWithStats.avgLiterRefueled, 1)
+                    formatNumber(vehicleWithStats.avgLiterRefueled, 2)
                 )
             )
 
@@ -128,7 +128,7 @@ fun DetailStats(
                 title = R.string.total_refuel,
                 value = stringResource(
                     R.string.liter_abbr_value,
-                    formatNumber(vehicleWithStats.totalFuelAdded, 1)
+                    formatNumber(vehicleWithStats.totalFuelAdded, 2)
                 )
             )
 
