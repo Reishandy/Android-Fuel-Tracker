@@ -24,18 +24,7 @@ class SettingViewModel @Inject constructor(
     val uiState: StateFlow<SettingState> = _uiState.asStateFlow()
 
     init {
-        val locales = if (Locale.getDefault().country != "US" && Locale.getDefault().country != "ID") {
-            listOf(
-                Locale.getDefault(),
-                Locale("en", "US"),
-                Locale("id", "ID")
-            )
-        } else {
-            listOf(
-                Locale("en", "US"),
-                Locale("id", "ID")
-            )
-        }
+        val locales = Locale.getAvailableLocales().toList()
         val savedLocaleTag = preferenceManager.getLocale()
         val selectedLocale = if (savedLocaleTag != null) {
             Locale.forLanguageTag(savedLocaleTag)
