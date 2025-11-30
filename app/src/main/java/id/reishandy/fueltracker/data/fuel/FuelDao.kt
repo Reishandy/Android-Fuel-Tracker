@@ -36,4 +36,8 @@ interface FuelDao {
 
     @Query("SELECT * FROM fuels ORDER BY date DESC, created_at DESC")
     suspend fun getAllSnapshot(): List<Fuel>
+
+    // New helper to fetch the immediate previous entry for a vehicle relative to a given (date, created_at)
+    @Query("SELECT * FROM fuels WHERE vehicle_id = :vehicleId AND (date < :date OR (date = :date AND created_at < :createdAt)) ORDER BY date DESC, created_at DESC LIMIT 1")
+    suspend fun getPreviousEntry(vehicleId: String, date: Long, createdAt: Long): Fuel?
 }

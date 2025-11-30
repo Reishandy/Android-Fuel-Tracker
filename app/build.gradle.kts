@@ -17,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "GOOGLE_CLIENT_ID", "\"543313518417-m4ah0v3ilpssutah475lrbuj1lgim7nq.apps.googleusercontent.com\"")
