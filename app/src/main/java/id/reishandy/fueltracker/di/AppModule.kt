@@ -14,6 +14,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import id.reishandy.fueltracker.data.FuelTrackerAppDatabase
+import id.reishandy.fueltracker.data.FuelMigrations
 import id.reishandy.fueltracker.data.fuel.FuelDao
 import id.reishandy.fueltracker.data.fuel.FuelRepository
 import id.reishandy.fueltracker.data.sync.DataSyncService
@@ -29,6 +30,7 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): FuelTrackerAppDatabase =
         Room.databaseBuilder(context, FuelTrackerAppDatabase::class.java, "fueltracker_db")
+            .addMigrations(FuelMigrations.MIGRATION_4_5)
             .fallbackToDestructiveMigration(dropAllTables = false)
             .build()
 
